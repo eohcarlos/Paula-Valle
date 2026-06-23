@@ -6,7 +6,7 @@ import { SectionTitle } from '@/components/ui/Card'
 import { StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
-import { cn, formatCurrency, formatDate, formatDateShort, isAppointmentLate, todayISO } from '@/lib/utils'
+import { cn, formatCurrency, formatDate, formatDateShort, isAppointmentLate, nowTimeBR, todayISO } from '@/lib/utils'
 import { daySlots } from '@/lib/availability'
 import type { Appointment, AppointmentStatus } from '@/types'
 
@@ -191,7 +191,10 @@ function RescheduleModal({
 }) {
   const [date, setDate] = useState(appointment.date)
   const [time, setTime] = useState('')
-  const slots = slotsFor(date)
+  const rawSlots = slotsFor(date)
+  const slots = date === todayISO()
+    ? rawSlots.filter((s) => s.time >= nowTimeBR())
+    : rawSlots
 
   return (
     <Modal open onClose={onClose} title="Reagendar atendimento">

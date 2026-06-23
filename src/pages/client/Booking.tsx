@@ -6,7 +6,7 @@ import { SectionTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Textarea } from '@/components/ui/Input'
 import { daySlots, isWorkingDay } from '@/lib/availability'
-import { cn, formatCurrency, nowBR, todayISO, WEEKDAYS_FULL } from '@/lib/utils'
+import { cn, formatCurrency, nowBR, nowTimeBR, todayISO, WEEKDAYS_FULL } from '@/lib/utils'
 import { format, addDays, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
@@ -23,10 +23,12 @@ export default function Booking() {
   const activeServices = services.filter((s) => s.active)
   const total = selected.reduce((s, id) => s + (services.find((x) => x.id === id)?.price ?? 0), 0)
   const duration = selected.reduce((s, id) => s + (services.find((x) => x.id === id)?.duration ?? 0), 0)
-  const slots = useMemo(
-    () => daySlots(date, settings, appointments, undefined, duration),
-    [date, settings, appointments, duration],
-  )
+  const slots = useMemo(() => {
+    const all = daySlots(date, settings, appointments, undefined, duration)
+    if (date !== todayISO()) return all
+    const now = nowTimeBR()
+    return all.filter((s) => s.time >= now)
+  }, [date, settings, appointments, duration])
   const working = isWorkingDay(date, settings)
 
   // Janela de agendamento configurável (até X dias à frente)
