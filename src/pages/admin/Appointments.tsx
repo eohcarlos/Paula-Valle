@@ -22,7 +22,7 @@ const FILTERS: { key: AppointmentStatus | 'all'; label: string }[] = [
 ]
 
 export default function AdminAppointments() {
-  const { appointments, services, users, setAppointmentStatus } = useStore()
+  const { appointments, services, users, setAppointmentStatus, loading } = useStore()
   const [filter, setFilter] = useState<AppointmentStatus | 'all'>('all')
   const [search, setSearch] = useState('')
   const [editing, setEditing] = useState<Appointment | 'new' | null>(null)
@@ -30,13 +30,16 @@ export default function AdminAppointments() {
   const [searchParams, setSearchParams] = useSearchParams()
 
   // Abre o popup de detalhes ao chegar via notificação (/admin/agendamentos?apt=ID)
+  // Só limpa o parâmetro depois que os agendamentos terminarem de carregar, senão o popup
+  // pode nunca abrir se o clique acontecer antes dos dados chegarem do Supabase.
   const aptParam = searchParams.get('apt')
   useEffect(() => {
-    if (!aptParam) return
+    if (!aptParam || loading) return
     const apt = appointments.find((a) => a.id === aptParam)
     if (apt) setDetails(apt)
+    else alert('Este agendamento não existe mais.')
     setSearchParams({}, { replace: true })
-  }, [aptParam, appointments, setSearchParams])
+  }, [aptParam, appointments, loading, setSearchParams])
 
   const rows = useMemo(() => {
     const todayKey = todayISO()

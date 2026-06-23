@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { CalendarPlus, Eye, CalendarClock, XCircle, Clock, User } from 'lucide-react'
 import { useStore } from '@/store/store'
 import { SectionTitle } from '@/components/ui/Card'
@@ -20,10 +20,23 @@ const FILTERS: { key: AppointmentStatus | 'all'; label: string }[] = [
 ]
 
 export default function ClientAppointments() {
-  const { currentUser, appointments, services, settings, setAppointmentStatus, updateAppointment } = useStore()
+  const { currentUser, appointments, services, settings, setAppointmentStatus, updateAppointment, loading } = useStore()
   const [filter, setFilter] = useState<AppointmentStatus | 'all'>('all')
   const [detail, setDetail] = useState<Appointment | null>(null)
   const [reschedule, setReschedule] = useState<Appointment | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  // Abre o popup de detalhes ao chegar via notificação (/app/agendamentos?apt=ID)
+  // Só limpa o parâmetro depois que os agendamentos terminarem de carregar, senão o popup
+  // pode nunca abrir se o clique acontecer antes dos dados chegarem do Supabase.
+  const aptParam = searchParams.get('apt')
+  useEffect(() => {
+    if (!aptParam || loading) return
+    const apt = appointments.find((a) => a.id === aptParam)
+    if (apt) setDetail(apt)
+    else alert('Este agendamento não existe mais.')
+    setSearchParams({}, { replace: true })
+  }, [aptParam, appointments, loading, setSearchParams])
 
   const mine = useMemo(
     () =>
