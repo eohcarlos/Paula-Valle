@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Plus, Search, Phone, Mail, Eye, Pencil, Trash2, MessageCircle, Cake } from 'lucide-react'
+import { Plus, Search, Phone, Mail, Eye, Pencil, Trash2, MessageCircle, Cake, Users } from 'lucide-react'
 import { useStore } from '@/store/store'
-import { SectionTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { Input, Textarea } from '@/components/ui/Input'
@@ -36,11 +35,23 @@ export default function Clients() {
 
   return (
     <div className="space-y-6">
-      <SectionTitle
-        title="Gestão de clientes"
-        subtitle="Cadastre, edite e acompanhe o histórico completo de cada cliente."
-        action={<Button onClick={() => setEditing('new')}><Plus size={16} /> Novo cliente</Button>}
-      />
+      {/* Hero header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-stone-800 via-stone-700 to-stone-900 px-7 py-9 sm:px-10">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_15%,rgba(201,163,94,0.28),transparent_55%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(228,152,162,0.18),transparent_50%)]" />
+        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-gold-500/30 bg-gold-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-gold-400">
+              <Users size={12} /> CLIENTES
+            </span>
+            <h1 className="font-serif text-3xl font-semibold text-white">Gestão de clientes</h1>
+            <p className="text-sm text-stone-300">Cadastre, edite e acompanhe o histórico completo de cada cliente.</p>
+          </div>
+          <Button onClick={() => setEditing('new')} className="shrink-0">
+            <Plus size={16} /> Novo cliente
+          </Button>
+        </div>
+      </div>
 
       <div className="relative max-w-md">
         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
@@ -51,32 +62,44 @@ export default function Clients() {
         {clients.map((c) => {
           const st = clientStats(c.id)
           return (
-            <div key={c.id} className="card p-5">
-              <div className="flex items-center gap-3">
-                <Avatar name={c.name} src={c.photo} size={48} />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold text-stone-800">{c.name}</p>
-                  <p className="truncate text-xs text-stone-400">{c.email}</p>
+            <div key={c.id} className="overflow-hidden rounded-3xl border border-cream-200 bg-white shadow-card transition hover:shadow-soft">
+              <div className="h-1 w-full bg-gold-400" />
+              <div className="p-5">
+                <div className="flex items-center gap-3">
+                  <Avatar name={c.name} src={c.photo} size={48} />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold text-stone-800">{c.name}</p>
+                    <p className="truncate text-xs text-stone-400">{c.email}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="mt-3 space-y-1 text-sm text-stone-500">
-                <p className="flex items-center gap-2"><Phone size={14} /> {c.phone}</p>
-                {c.birthDate && <p className="flex items-center gap-2"><Cake size={14} /> {formatDateShort(c.birthDate)}</p>}
-              </div>
-              <div className="mt-3 flex justify-between rounded-2xl bg-cream-50 px-4 py-2 text-sm">
-                <span className="text-stone-400">{st.visits} visitas</span>
-                <span className="font-semibold text-gold-700">{formatCurrency(st.spent)}</span>
-              </div>
-              <div className="mt-3 flex gap-1">
-                <Button size="sm" variant="ghost" className="flex-1" onClick={() => setViewing(c)}><Eye size={15} /> Histórico</Button>
-                <a href={whatsappLink(c.phone, DEFAULT_WHATS_MESSAGE)} target="_blank" rel="noopener noreferrer" className="btn-ghost rounded-2xl px-3 text-[#25D366]"><MessageCircle size={15} /></a>
-                <button onClick={() => setEditing(c)} className="btn-ghost rounded-2xl px-3"><Pencil size={15} /></button>
-                <button onClick={() => { if (confirm(`Excluir ${c.name}?`)) deleteUser(c.id) }} className="btn-ghost rounded-2xl px-3 text-red-500"><Trash2 size={15} /></button>
+                <div className="mt-3 space-y-1 text-sm text-stone-500">
+                  <p className="flex items-center gap-2"><Phone size={14} /> {c.phone}</p>
+                  {c.birthDate && <p className="flex items-center gap-2"><Cake size={14} /> {formatDateShort(c.birthDate)}</p>}
+                </div>
+                <div className="mt-3 flex justify-between rounded-2xl bg-cream-50 px-4 py-2.5 text-sm">
+                  <span className="text-stone-400">{st.visits} visitas</span>
+                  <span className="font-semibold text-gold-700">{formatCurrency(st.spent)}</span>
+                </div>
+                <div className="mt-3 flex gap-1 border-t border-cream-100 pt-3">
+                  <Button size="sm" variant="ghost" className="flex-1" onClick={() => setViewing(c)}><Eye size={15} /> Histórico</Button>
+                  <a href={whatsappLink(c.phone, DEFAULT_WHATS_MESSAGE)} target="_blank" rel="noopener noreferrer" className="btn-ghost rounded-2xl px-3 text-[#25D366]"><MessageCircle size={15} /></a>
+                  <button onClick={() => setEditing(c)} className="btn-ghost rounded-2xl px-3"><Pencil size={15} /></button>
+                  <button onClick={() => { if (confirm(`Excluir ${c.name}?`)) deleteUser(c.id) }} className="btn-ghost rounded-2xl px-3 text-red-500"><Trash2 size={15} /></button>
+                </div>
               </div>
             </div>
           )
         })}
-        {clients.length === 0 && <p className="col-span-full py-12 text-center text-stone-400">Nenhum cliente encontrado.</p>}
+        {clients.length === 0 && (
+          <div className="col-span-full flex flex-col items-center py-16 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-cream-100">
+              <Users size={28} className="text-stone-400" />
+            </div>
+            <p className="mt-4 font-serif text-lg font-semibold text-stone-700">Nenhum cliente encontrado</p>
+            <p className="mt-1 text-sm text-stone-400">Tente ajustar a busca ou adicione um novo cliente.</p>
+            <Button className="mt-4" onClick={() => setEditing('new')}><Plus size={16} /> Novo cliente</Button>
+          </div>
+        )}
       </div>
 
       {editing && (

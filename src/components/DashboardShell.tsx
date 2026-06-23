@@ -3,6 +3,7 @@ import { NavLink, Link, useNavigate, Outlet } from 'react-router-dom'
 import {
   Bell, LogOut, Menu, X, Check, Camera, ChevronLeft, ChevronRight,
   CalendarPlus, Gift, Heart, History as HistoryIcon, CalendarCheck,
+  LayoutDashboard, CalendarDays, Users, Scissors,
 } from 'lucide-react'
 import { Logo, Avatar } from '@/components/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -25,6 +26,17 @@ const CLIENT_BOTTOM_LEFT = [
 const CLIENT_BOTTOM_RIGHT = [
   { to: '/app/historico',     label: 'Histórico',     Icon: HistoryIcon },
   { to: '/app/agendamentos',  label: 'Agendamentos',  Icon: CalendarCheck },
+]
+
+/* Bottom nav items for the admin mobile bar */
+const ADMIN_BOTTOM_LEFT = [
+  { to: '/admin',        label: 'Dashboard', Icon: LayoutDashboard, end: true },
+  { to: '/admin/agenda', label: 'Agenda',    Icon: CalendarDays },
+]
+const ADMIN_BOTTOM_CENTER = { to: '/admin/agendamentos', label: 'Agendamentos', Icon: CalendarCheck }
+const ADMIN_BOTTOM_RIGHT = [
+  { to: '/admin/clientes', label: 'Clientes', Icon: Users },
+  { to: '/admin/servicos', label: 'Serviços', Icon: Scissors },
 ]
 
 export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }) {
@@ -132,8 +144,8 @@ export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }
       {/* Desktop sidebar — always shown */}
       <div className="hidden lg:block">{renderSidebar(collapsed)}</div>
 
-      {/* Mobile sidebar drawer — admin only (client uses bottom nav) */}
-      {!isClient && mobileOpen && (
+      {/* Mobile sidebar drawer — both roles use it; client only for overflow, admin for all */}
+      {mobileOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div className="absolute inset-0 bg-stone-900/40 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
           <div className="absolute left-0 top-0 h-full animate-fade-in">{renderSidebar(false)}</div>
@@ -145,7 +157,7 @@ export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }
         {/* Header */}
         <header className="relative z-30 flex items-center justify-between border-b border-cream-200 bg-white/70 px-4 py-3 backdrop-blur lg:px-8">
 
-          {/* Left: hamburger (admin mobile) or logo link (client mobile) */}
+          {/* Left: logo link (client) or hamburger for overflow items (admin) */}
           {isClient ? (
             <Link to="/app" className="flex items-center gap-2 lg:hidden">
               <Logo compact />
@@ -250,109 +262,112 @@ export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }
                 <Avatar name={currentUser?.name ?? ''} src={currentUser?.photo} size={40} />
               </NavLink>
             ) : (
-              <Avatar name={currentUser?.name ?? ''} src={currentUser?.photo} size={36} />
+              <div className="flex h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-cream-300 ring-offset-2">
+                <Avatar name={currentUser?.name ?? ''} src={currentUser?.photo} size={40} />
+              </div>
             )}
           </div>
         </header>
 
         {/* Content */}
-        <main className={cn('flex-1 overflow-y-auto p-4 lg:p-8', isClient && 'pb-28 lg:pb-8')}>
+        <main className="flex-1 overflow-y-auto p-4 pb-28 lg:p-8 lg:pb-8">
           <div className="mx-auto max-w-7xl animate-fade-in">
             <Outlet />
           </div>
         </main>
       </div>
 
-      {/* ── Client-only mobile bottom navigation ── */}
-      {isClient && (
-        <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">
-          {/* Frosted glass backdrop */}
-          <div className="absolute inset-0 border-t border-cream-200 bg-white/85 backdrop-blur-xl" />
+      {/* ── Mobile bottom navigation (both roles) ── */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">
+        <div className="absolute inset-0 border-t border-cream-200 bg-white/85 backdrop-blur-xl" />
 
-          <div className="relative flex items-end justify-around px-2 pb-safe pt-1">
+        <div className="relative flex items-end justify-around px-2 pb-safe pt-1">
 
-            {/* Left: Fidelidade + Favoritos */}
-            {CLIENT_BOTTOM_LEFT.map(({ to, label, Icon }) => (
-              <NavLink
-                key={to}
-                to={to}
-                className={({ isActive }) =>
-                  cn(
-                    'flex flex-1 flex-col items-center gap-0.5 py-2 text-center transition-all',
-                    isActive ? 'text-gold-600' : 'text-stone-400 hover:text-stone-600',
-                  )
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <span className={cn(
-                      'flex h-8 w-8 items-center justify-center rounded-2xl transition-all',
-                      isActive ? 'bg-gold-400/15 scale-110' : '',
-                    )}>
-                      <Icon size={20} strokeWidth={isActive ? 2.2 : 1.8} />
-                    </span>
-                    <span className="text-[10px] font-semibold">{label}</span>
-                  </>
-                )}
-              </NavLink>
-            ))}
+          {/* Left items */}
+          {(isClient ? CLIENT_BOTTOM_LEFT : ADMIN_BOTTOM_LEFT).map(({ to, label, Icon, ...rest }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={'end' in rest ? (rest as { end?: boolean }).end : false}
+              className={({ isActive }) =>
+                cn(
+                  'flex flex-1 flex-col items-center gap-0.5 py-2 text-center transition-all',
+                  isActive ? 'text-gold-600' : 'text-stone-400 hover:text-stone-600',
+                )
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <span className={cn(
+                    'flex h-8 w-8 items-center justify-center rounded-2xl transition-all',
+                    isActive ? 'bg-gold-400/15 scale-110' : '',
+                  )}>
+                    <Icon size={20} strokeWidth={isActive ? 2.2 : 1.8} />
+                  </span>
+                  <span className="text-[10px] font-semibold">{label}</span>
+                </>
+              )}
+            </NavLink>
+          ))}
 
-            {/* Center: Agendar CTA */}
-            <div className="flex flex-col items-center pb-1">
-              <NavLink
-                to="/app/agendar"
-                className="flex flex-col items-center gap-1"
-              >
-                {({ isActive }) => (
-                  <>
-                    <span className={cn(
-                      'flex h-14 w-14 -translate-y-3 items-center justify-center rounded-full shadow-gold transition-transform active:scale-95',
-                      isActive
-                        ? 'bg-gradient-to-br from-gold-300 to-gold-500 ring-4 ring-gold-300/40 ring-offset-2'
-                        : 'bg-gradient-to-br from-gold-400 to-gold-600 hover:scale-105',
-                    )}>
-                      <CalendarPlus size={24} className="text-white" strokeWidth={2} />
-                    </span>
-                    <span className={cn(
-                      '-mt-2 text-[10px] font-bold uppercase tracking-wide',
-                      isActive ? 'text-gold-600' : 'text-stone-500',
-                    )}>
-                      Agendar
-                    </span>
-                  </>
-                )}
-              </NavLink>
-            </div>
-
-            {/* Right: Histórico + Meus Agendamentos */}
-            {CLIENT_BOTTOM_RIGHT.map(({ to, label, Icon }) => (
-              <NavLink
-                key={to}
-                to={to}
-                className={({ isActive }) =>
-                  cn(
-                    'flex flex-1 flex-col items-center gap-0.5 py-2 text-center transition-all',
-                    isActive ? 'text-gold-600' : 'text-stone-400 hover:text-stone-600',
-                  )
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <span className={cn(
-                      'flex h-8 w-8 items-center justify-center rounded-2xl transition-all',
-                      isActive ? 'bg-gold-400/15 scale-110' : '',
-                    )}>
-                      <Icon size={20} strokeWidth={isActive ? 2.2 : 1.8} />
-                    </span>
-                    <span className="text-[10px] font-semibold">{label}</span>
-                  </>
-                )}
-              </NavLink>
-            ))}
-
+          {/* Center CTA */}
+          <div className="flex flex-col items-center pb-1">
+            <NavLink
+              to={isClient ? '/app/agendar' : ADMIN_BOTTOM_CENTER.to}
+              className="flex flex-col items-center gap-1"
+            >
+              {({ isActive }) => (
+                <>
+                  <span className={cn(
+                    'flex h-14 w-14 -translate-y-3 items-center justify-center rounded-full shadow-gold transition-transform active:scale-95',
+                    isActive
+                      ? 'bg-gradient-to-br from-gold-300 to-gold-500 ring-4 ring-gold-300/40 ring-offset-2'
+                      : 'bg-gradient-to-br from-gold-400 to-gold-600 hover:scale-105',
+                  )}>
+                    {isClient
+                      ? <CalendarPlus size={24} className="text-white" strokeWidth={2} />
+                      : <CalendarCheck size={24} className="text-white" strokeWidth={2} />
+                    }
+                  </span>
+                  <span className={cn(
+                    '-mt-2 text-[10px] font-bold uppercase tracking-wide',
+                    isActive ? 'text-gold-600' : 'text-stone-500',
+                  )}>
+                    {isClient ? 'Agendar' : 'Agendamentos'}
+                  </span>
+                </>
+              )}
+            </NavLink>
           </div>
-        </nav>
-      )}
+
+          {/* Right items */}
+          {(isClient ? CLIENT_BOTTOM_RIGHT : ADMIN_BOTTOM_RIGHT).map(({ to, label, Icon }) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) =>
+                cn(
+                  'flex flex-1 flex-col items-center gap-0.5 py-2 text-center transition-all',
+                  isActive ? 'text-gold-600' : 'text-stone-400 hover:text-stone-600',
+                )
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <span className={cn(
+                    'flex h-8 w-8 items-center justify-center rounded-2xl transition-all',
+                    isActive ? 'bg-gold-400/15 scale-110' : '',
+                  )}>
+                    <Icon size={20} strokeWidth={isActive ? 2.2 : 1.8} />
+                  </span>
+                  <span className="text-[10px] font-semibold">{label}</span>
+                </>
+              )}
+            </NavLink>
+          ))}
+
+        </div>
+      </nav>
     </div>
   )
 }

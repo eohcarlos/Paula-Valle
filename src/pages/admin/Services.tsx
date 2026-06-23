@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { Plus, Pencil, Trash2, Clock } from 'lucide-react'
+import { Plus, Pencil, Trash2, Clock, Sparkles } from 'lucide-react'
 import { useStore } from '@/store/store'
-import { SectionTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { Input, Textarea } from '@/components/ui/Input'
@@ -14,33 +13,62 @@ export default function Services() {
 
   return (
     <div className="space-y-6">
-      <SectionTitle
-        title="Gestão de serviços"
-        subtitle="Configure os serviços oferecidos pelo salão."
-        action={<Button onClick={() => setEditing('new')}><Plus size={16} /> Novo serviço</Button>}
-      />
+      {/* Hero header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-stone-800 via-stone-700 to-stone-900 px-7 py-9 sm:px-10">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(201,163,94,0.28),transparent_55%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_25%_80%,rgba(228,152,162,0.18),transparent_50%)]" />
+        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-gold-500/30 bg-gold-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-gold-400">
+              <Sparkles size={12} /> SERVIÇOS
+            </span>
+            <h1 className="font-serif text-3xl font-semibold text-white">Gestão de serviços</h1>
+            <p className="text-sm text-stone-300">Configure os serviços oferecidos pelo salão.</p>
+          </div>
+          <Button onClick={() => setEditing('new')} className="shrink-0">
+            <Plus size={16} /> Novo serviço
+          </Button>
+        </div>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {services.map((s) => (
-          <div key={s.id} className={cn('card p-5', !s.active && 'opacity-60')}>
-            <div className="flex items-start justify-between">
-              <span className="text-4xl">{s.icon}</span>
-              <span className={cn('rounded-full px-3 py-1 text-xs font-medium', s.active ? 'bg-emerald-100 text-emerald-600' : 'bg-stone-100 text-stone-400')}>
-                {s.active ? 'Ativo' : 'Inativo'}
-              </span>
-            </div>
-            <p className="mt-3 font-serif text-lg font-semibold text-stone-800">{s.name}</p>
-            <p className="text-sm text-stone-400 line-clamp-2">{s.description}</p>
-            <div className="mt-3 flex items-center justify-between">
-              <span className="flex items-center gap-1 text-sm text-stone-500"><Clock size={14} /> {s.duration} min</span>
-              <span className="font-serif text-lg font-semibold text-gold-700">{formatCurrency(s.price)}</span>
-            </div>
-            <div className="mt-4 flex gap-2">
-              <Button size="sm" variant="secondary" className="flex-1" onClick={() => setEditing(s)}><Pencil size={14} /> Editar</Button>
-              <button onClick={() => { if (confirm(`Excluir ${s.name}?`)) deleteService(s.id) }} className="btn-ghost rounded-2xl px-3 text-red-500"><Trash2 size={15} /></button>
+          <div key={s.id} className={cn('overflow-hidden rounded-3xl border border-cream-200 bg-white shadow-card', !s.active && 'opacity-60')}>
+            <div className={cn('h-1 w-full', s.active ? 'bg-gold-400' : 'bg-stone-200')} />
+            <div className="p-5">
+              <div className="flex items-start justify-between">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cream-100 text-3xl">
+                  {s.icon}
+                </div>
+                <span className={cn('rounded-full px-3 py-1 text-xs font-medium', s.active ? 'bg-emerald-100 text-emerald-600' : 'bg-stone-100 text-stone-400')}>
+                  {s.active ? 'Ativo' : 'Inativo'}
+                </span>
+              </div>
+              <p className="mt-3 font-serif text-lg font-semibold text-stone-800">{s.name}</p>
+              <p className="text-sm text-stone-400 line-clamp-2">{s.description}</p>
+              <div className="mt-3 flex items-center justify-between">
+                <span className="flex items-center gap-1.5 rounded-xl bg-cream-100 px-3 py-1.5 text-xs font-semibold text-stone-500">
+                  <Clock size={12} /> {s.duration} min
+                </span>
+                <span className="font-serif text-lg font-semibold text-gold-600">{formatCurrency(s.price)}</span>
+              </div>
+              <div className="mt-4 flex gap-2 border-t border-cream-100 pt-4">
+                <Button size="sm" variant="secondary" className="flex-1" onClick={() => setEditing(s)}><Pencil size={14} /> Editar</Button>
+                <button onClick={() => { if (confirm(`Excluir ${s.name}?`)) deleteService(s.id) }} className="btn-ghost rounded-2xl px-3 text-red-500"><Trash2 size={15} /></button>
+              </div>
             </div>
           </div>
         ))}
+        {services.length === 0 && (
+          <div className="col-span-full flex flex-col items-center py-16 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-cream-100">
+              <Sparkles size={28} className="text-stone-400" />
+            </div>
+            <p className="mt-4 font-serif text-lg font-semibold text-stone-700">Nenhum serviço cadastrado</p>
+            <p className="mt-1 text-sm text-stone-400">Adicione os serviços oferecidos pelo seu salão.</p>
+            <Button className="mt-4" onClick={() => setEditing('new')}><Plus size={16} /> Novo serviço</Button>
+          </div>
+        )}
       </div>
 
       {editing && (

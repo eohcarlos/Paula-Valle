@@ -1,8 +1,7 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Plus, Search, Check, Play, CheckCircle2, XCircle, Pencil, Eye } from 'lucide-react'
+import { Plus, Search, Check, Play, CheckCircle2, XCircle, Pencil, Eye, CalendarClock } from 'lucide-react'
 import { useStore } from '@/store/store'
-import { SectionTitle } from '@/components/ui/Card'
 import { StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
@@ -79,21 +78,37 @@ export default function AdminAppointments() {
 
   return (
     <div className="space-y-6">
-      <SectionTitle
-        title="Gestão de agendamentos"
-        subtitle="Crie, edite e gerencie o status de todos os atendimentos."
-        action={<Button onClick={() => setEditing('new')}><Plus size={16} /> Novo agendamento</Button>}
-      />
+      {/* Hero header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-stone-800 via-stone-700 to-stone-900 px-7 py-9 sm:px-10">
+        {/* Radial gradient overlays */}
+        <div className="pointer-events-none absolute inset-0 opacity-40" style={{ background: 'radial-gradient(ellipse at 20% 50%, #C9A35E33 0%, transparent 60%)' }} />
+        <div className="pointer-events-none absolute inset-0 opacity-30" style={{ background: 'radial-gradient(ellipse at 80% 20%, #E498A222 0%, transparent 55%)' }} />
+
+        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-gold-500/30 bg-gold-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-gold-400">
+              Agendamentos
+            </span>
+            <h1 className="mt-3 font-serif text-3xl font-semibold text-white sm:text-4xl">Gestão de agendamentos</h1>
+            <p className="mt-1 text-stone-300">Crie, edite e gerencie o status de todos os atendimentos.</p>
+          </div>
+          <div className="shrink-0">
+            <Button onClick={() => setEditing('new')}><Plus size={16} /> Novo agendamento</Button>
+          </div>
+        </div>
+      </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-1 sm:overflow-x-auto">
+        <div className="flex flex-wrap gap-2 sm:flex-1">
           {FILTERS.map((f) => (
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
               className={cn(
-                'whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition',
-                filter === f.key ? 'border-gold-400 bg-gold-400 text-white' : 'border-cream-200 bg-white text-stone-500 hover:border-beige-300',
+                'rounded-2xl border px-4 py-2 text-sm font-medium transition',
+                filter === f.key
+                  ? 'border-gold-400 bg-gradient-to-br from-gold-400 to-gold-500 text-white shadow-gold'
+                  : 'border-cream-200 bg-white text-stone-500 hover:border-beige-300',
               )}
             >
               {f.label}
@@ -114,7 +129,7 @@ export default function AdminAppointments() {
       {/* Mobile: cards */}
       <div className="space-y-3 md:hidden">
         {rows.length === 0 && (
-          <div className="card py-12 text-center text-stone-400">Nenhum agendamento encontrado.</div>
+          <div className="overflow-hidden rounded-3xl border border-cream-200 bg-white shadow-card py-12 text-center text-stone-400">Nenhum agendamento encontrado.</div>
         )}
         {rows.map((a, i) => {
           const todayKey = todayISO()
@@ -130,7 +145,7 @@ export default function AdminAppointments() {
               {showHistoryLabel && (
                 <p className="px-1 pt-2 text-xs font-semibold uppercase tracking-wider text-stone-400">Histórico</p>
               )}
-              <div className="card space-y-3 p-4">
+              <div className="overflow-hidden rounded-3xl border border-cream-200 bg-white shadow-card space-y-3 p-4">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="font-medium text-stone-700">{a.clientName}</p>
@@ -170,7 +185,7 @@ export default function AdminAppointments() {
       </div>
 
       {/* Desktop: table */}
-      <div className="card hidden overflow-x-auto p-0 md:block">
+      <div className="overflow-hidden rounded-3xl border border-cream-200 bg-white shadow-card hidden overflow-x-auto p-0 md:block">
         <table className="w-full min-w-[760px] text-sm">
           <thead>
             <tr className="border-b border-cream-200 bg-cream-50 text-left text-xs uppercase tracking-wide text-stone-400">

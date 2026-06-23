@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
-import { ChevronLeft, ChevronRight, CalendarDays, LayoutGrid } from 'lucide-react'
+import { ChevronLeft, ChevronRight, CalendarDays, LayoutGrid, Calendar } from 'lucide-react'
 import { useStore } from '@/store/store'
-import { SectionTitle } from '@/components/ui/Card'
 import { StatusBadge } from '@/components/ui/Badge'
 import { AppointmentDetailsModal } from '@/components/AppointmentDetailsModal'
 import { cn, generateTimeSlots, nowBR, WEEKDAYS } from '@/lib/utils'
@@ -39,23 +38,49 @@ export default function Agenda() {
 
   return (
     <div className="space-y-6">
-      <SectionTitle
-        title="Agenda inteligente"
-        subtitle="Clique em um atendimento para ver os detalhes completos."
-        action={
-          <div className="flex gap-1 rounded-2xl bg-cream-100 p-1">
-            <button onClick={() => setView('day')} className={cn('flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium transition', view === 'day' ? 'bg-white text-gold-700 shadow-sm' : 'text-stone-500')}>
-              <CalendarDays size={15} /> Diária
-            </button>
-            <button onClick={() => setView('week')} className={cn('flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium transition', view === 'week' ? 'bg-white text-gold-700 shadow-sm' : 'text-stone-500')}>
-              <LayoutGrid size={15} /> Semanal
-            </button>
+      {/* Hero header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-stone-800 via-stone-700 to-stone-900 px-7 py-9 sm:px-10">
+        {/* Radial gradient overlays */}
+        <div className="pointer-events-none absolute inset-0 opacity-40" style={{ background: 'radial-gradient(ellipse at 20% 50%, #C9A35E33 0%, transparent 60%)' }} />
+        <div className="pointer-events-none absolute inset-0 opacity-30" style={{ background: 'radial-gradient(ellipse at 80% 20%, #E498A222 0%, transparent 55%)' }} />
+
+        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-gold-500/30 bg-gold-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-gold-400">
+              Agenda
+            </span>
+            <h1 className="mt-3 font-serif text-3xl font-semibold text-white sm:text-4xl">Agenda inteligente</h1>
+            <p className="mt-1 text-stone-300">Clique em um atendimento para ver os detalhes completos.</p>
           </div>
-        }
-      />
+
+          {/* Day/Week toggle */}
+          <div className="shrink-0">
+            <div className="flex gap-1 rounded-2xl bg-white/10 p-1">
+              <button
+                onClick={() => setView('day')}
+                className={cn(
+                  'flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium transition',
+                  view === 'day' ? 'bg-white text-gold-700 shadow-sm' : 'text-stone-300 hover:text-white',
+                )}
+              >
+                <CalendarDays size={15} /> Diária
+              </button>
+              <button
+                onClick={() => setView('week')}
+                className={cn(
+                  'flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium transition',
+                  view === 'week' ? 'bg-white text-gold-700 shadow-sm' : 'text-stone-300 hover:text-white',
+                )}
+              >
+                <LayoutGrid size={15} /> Semanal
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Navegação */}
-      <div className="flex items-center justify-between">
+      <div className="overflow-hidden rounded-3xl border border-cream-200 bg-white shadow-card px-5 py-3 flex items-center justify-between">
         <button onClick={() => move(-1)} className="rounded-full p-2 text-stone-500 transition hover:bg-cream-100"><ChevronLeft size={20} /></button>
         <p className="font-serif text-lg font-semibold capitalize">
           {view === 'day'
@@ -67,7 +92,7 @@ export default function Agenda() {
 
       {/* Diária */}
       {view === 'day' && (
-        <div className="card p-0">
+        <div className="overflow-hidden rounded-3xl border border-cream-200 bg-white shadow-card p-0">
           {dayRangeList.length === 0 ? (
             <p className="py-16 text-center text-stone-400">O salão não atende neste dia.</p>
           ) : (
@@ -107,7 +132,7 @@ export default function Agenda() {
 
       {/* Semanal */}
       {view === 'week' && (
-        <div className="card overflow-x-auto p-0">
+        <div className="overflow-hidden rounded-3xl border border-cream-200 bg-white shadow-card overflow-x-auto p-0">
           <div className="min-w-[900px]">
             <div className="grid grid-cols-8 border-b border-cream-200 bg-cream-50 text-center text-xs font-semibold text-stone-500">
               <div className="py-3" />
