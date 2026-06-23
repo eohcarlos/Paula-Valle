@@ -15,22 +15,36 @@ export function AuthShell({
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="grid w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white shadow-2xl lg:grid-cols-2">
-        {/* Lado decorativo */}
-        <div className="relative hidden flex-col justify-between bg-gradient-to-br from-gold-400 via-gold-500 to-beige-500 p-10 text-white lg:flex">
-          <Link to="/">
-            <Logo className="[&_p]:text-white [&_span]:text-white" />
-          </Link>
-          <div>
-            <h2 className="font-serif text-4xl font-semibold leading-tight text-white">
+
+        {/* Lado esquerdo — imagem da modelo */}
+        <div className="relative hidden flex-col justify-between overflow-hidden p-10 text-white lg:flex">
+          {/* Imagem de fundo */}
+          <img
+            src="/auth-model.jpg"
+            alt="Paula Valle Studio"
+            className="absolute inset-0 h-full w-full object-cover object-center"
+          />
+          {/* Overlay gradiente para legibilidade do texto */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-stone-900/80 via-stone-900/40 to-transparent" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-stone-900/70 via-transparent to-transparent" />
+
+          {/* Conteúdo sobre a imagem */}
+          <div className="relative">
+            <Link to="/">
+              <Logo className="[&_p]:text-white [&_span]:text-white" />
+            </Link>
+          </div>
+
+          <div className="relative">
+            <h2 className="font-serif text-4xl font-semibold leading-tight text-white drop-shadow-lg">
               Beleza, cuidado e elegância em cada detalhe.
             </h2>
-            <p className="mt-4 text-white/90">
+            <p className="mt-4 text-white/90 drop-shadow">
               Agende seus serviços, acompanhe seu histórico e aproveite recompensas exclusivas.
             </p>
           </div>
-          <p className="text-sm text-white/70">Salão Paula Valle • @paulavalle_e</p>
-          <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-white/10" />
-          <div className="pointer-events-none absolute -bottom-12 right-12 h-32 w-32 rounded-full bg-white/10" />
+
+          <p className="relative text-sm text-white/70">Salão Paula Valle • @paulavalle_e</p>
         </div>
 
         {/* Formulário */}

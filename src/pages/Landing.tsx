@@ -51,40 +51,41 @@ export default function Landing() {
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="relative mx-auto max-w-6xl px-5 pt-16 pb-20 text-center">
-        <div className="animate-fade-in">
-          <span className="inline-flex items-center gap-2 rounded-full border border-gold-300/50 bg-white/70 px-4 py-1.5 text-xs font-medium text-gold-700">
-            <Sparkles size={14} /> Studio de Beleza Negra • Itu/SP
-          </span>
-          <h1 className="mx-auto mt-6 max-w-3xl font-serif text-5xl font-semibold leading-tight text-stone-800 sm:text-6xl">
-            Cachos saudáveis, <span className="gold-text">sem frizz</span> — seja qual for a sua curvatura
-          </h1>
-          <p className="mx-auto mt-5 max-w-xl text-lg text-stone-500">
-            Studio especialista em cachos, crespos e tranças. Cuidamos da sua textura natural com tratamentos sem
-            química, valorizando a beleza negra e a sua autoestima.
-          </p>
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <Link to="/cadastro">
-              <Button size="lg" className="group">
-                Fazer meu agendamento
-                <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
-            <a href={wppHero} target="_blank" rel="noopener noreferrer">
-              <Button size="lg" variant="secondary">
-                <MessageCircle size={18} /> Falar no WhatsApp
-              </Button>
-            </a>
-          </div>
-          <div className="mt-6 flex items-center justify-center gap-1 text-sm text-stone-400">
-            <Star size={16} className="fill-gold-400 text-gold-400" />
-            <Star size={16} className="fill-gold-400 text-gold-400" />
-            <Star size={16} className="fill-gold-400 text-gold-400" />
-            <Star size={16} className="fill-gold-400 text-gold-400" />
-            <Star size={16} className="fill-gold-400 text-gold-400" />
-            <span className="ml-2">Curvatura única, cuidado especializado</span>
-          </div>
+      {/* Hero — banner full width */}
+      <section className="relative mx-auto max-w-6xl px-5 pt-8 pb-10 animate-fade-in">
+        {/* Banner image */}
+        <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+          <img
+            src="/hero-banner.jpg"
+            alt="Paula Valle Studio — Especialista em Curvaturas"
+            className="w-full object-cover"
+            style={{ maxHeight: '520px', objectPosition: 'center top' }}
+          />
+          {/* Overlay gradiente na parte inferior para suavizar transição */}
+          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/30 to-transparent rounded-b-3xl" />
+        </div>
+
+        {/* CTAs abaixo do banner */}
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link to="/cadastro">
+            <Button size="lg" className="group">
+              Fazer meu agendamento
+              <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+            </Button>
+          </Link>
+          <a href={wppHero} target="_blank" rel="noopener noreferrer">
+            <Button size="lg" variant="secondary">
+              <MessageCircle size={18} /> Falar no WhatsApp
+            </Button>
+          </a>
+        </div>
+        <div className="mt-4 flex items-center justify-center gap-1 text-sm text-stone-400">
+          <Star size={15} className="fill-gold-400 text-gold-400" />
+          <Star size={15} className="fill-gold-400 text-gold-400" />
+          <Star size={15} className="fill-gold-400 text-gold-400" />
+          <Star size={15} className="fill-gold-400 text-gold-400" />
+          <Star size={15} className="fill-gold-400 text-gold-400" />
+          <span className="ml-2">Curvatura única, cuidado especializado</span>
         </div>
       </section>
 
