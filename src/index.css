@@ -1,0 +1,238 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream-50 text-stone-700 font-sans antialiased;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(246, 214, 217, 0.35), transparent 38%),
+      radial-gradient(circle at 88% 18%, rgba(232, 206, 145, 0.28), transparent 42%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  html.dark body {
+    color: #CFCBC4;
+    background-color: #0F1320;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(182, 164, 255, 0.10), transparent 38%),
+      radial-gradient(circle at 88% 18%, rgba(201, 163, 94, 0.10), transparent 42%);
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-serif text-stone-800;
+  }
+
+  /* Scrollbar premium */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-beige-300 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-beige-400;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/60;
+  }
+
+  .card {
+    @apply bg-white rounded-3xl shadow-card border border-cream-200;
+  }
+
+  .input-field {
+    @apply w-full rounded-2xl border border-beige-200 bg-cream-50/60 px-4 py-3 text-stone-700
+           placeholder:text-stone-400 outline-none transition
+           focus:border-gold-400 focus:ring-4 focus:ring-gold-300/30 focus:bg-white;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-stone-600 mb-1.5;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl font-medium
+           transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed
+           focus:outline-none focus:ring-4 active:scale-[0.97];
+  }
+
+  .btn-primary {
+    @apply btn bg-gradient-to-r from-gold-400 to-gold-600 text-white shadow-gold
+           hover:shadow-lg hover:brightness-105 focus:ring-gold-300/40;
+  }
+
+  .btn-secondary {
+    @apply btn bg-white text-stone-700 border border-beige-200 hover:border-gold-400
+           hover:text-gold-700 focus:ring-beige-200;
+  }
+
+  .btn-blush {
+    @apply btn bg-gradient-to-r from-blush-300 to-blush-500 text-white shadow-soft
+           hover:brightness-105 focus:ring-blush-200;
+  }
+
+  .btn-ghost {
+    @apply btn text-stone-500 hover:bg-cream-100 hover:text-stone-700;
+  }
+
+  .gold-text {
+    @apply bg-gradient-to-r from-gold-500 via-gold-600 to-beige-500 bg-clip-text text-transparent;
+  }
+
+  .nav-link {
+    @apply flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-stone-500
+           transition-all hover:bg-cream-100 hover:text-stone-800;
+  }
+
+  .nav-link-active {
+    @apply bg-gradient-to-r from-gold-400/15 to-blush-200/30 text-gold-700
+           shadow-sm border border-gold-300/40;
+  }
+}
+
+/* Recharts polish */
+.recharts-default-tooltip {
+  border-radius: 1rem !important;
+  border: 1px solid #EADDCB !important;
+  box-shadow: 0 8px 30px -8px rgba(176, 138, 69, 0.3) !important;
+}
+
+/* =========================================================
+   DARK MODE — tema escuro aplicado em todo o painel
+   ========================================================= */
+
+/* Superfícies principais */
+html.dark .card {
+  background-color: #1b2230 !important;
+  border-color: #2a3242 !important;
+}
+html.dark .glass {
+  background-color: rgba(22, 28, 40, 0.75) !important;
+  border-color: #2a3242 !important;
+}
+
+/* Fundos brancos (sidebar, header, modais, dropdowns, pílulas) */
+html.dark .bg-white,
+html.dark [class*="bg-white/"] {
+  background-color: #1b2230 !important;
+}
+
+/* Insets / hovers claros */
+html.dark .bg-cream-50,
+html.dark [class*="bg-cream-50/"] {
+  background-color: #161c28 !important;
+}
+html.dark .bg-cream-100,
+html.dark [class*="bg-cream-100/"] {
+  background-color: #232c3d !important;
+}
+html.dark .bg-blush-50,
+html.dark [class*="bg-blush-50/"] {
+  background-color: #241e2e !important;
+}
+
+/* Bordas */
+html.dark .border-cream-100,
+html.dark .border-cream-200,
+html.dark .border-beige-200,
+html.dark .border-beige-300 {
+  border-color: #2a3242 !important;
+}
+html.dark .divide-cream-100 > :not([hidden]) ~ :not([hidden]),
+html.dark .divide-cream-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #2a3242 !important;
+}
+
+/* Gradientes neutros (cards "from-white/from-cream") → escuros.
+   Os gradientes dourados/blush da marca permanecem intactos. */
+html.dark .from-white {
+  --tw-gradient-from: #1b2230 var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(27 34 48 / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+html.dark .to-cream-50 {
+  --tw-gradient-to: #161c28 var(--tw-gradient-to-position) !important;
+}
+html.dark .from-cream-50 {
+  --tw-gradient-from: #161c28 var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(22 28 40 / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+/* Texto — contraste legível no escuro */
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark .text-stone-800 {
+  color: #ECEAE6 !important;
+}
+html.dark .text-stone-700 { color: #D8D5D0 !important; }
+html.dark .text-stone-600 { color: #C5C1BA !important; }
+html.dark .text-stone-500 { color: #A8A29E !important; }
+html.dark .text-stone-400 { color: #8C877F !important; }
+html.dark .text-stone-300 { color: #6F6A63 !important; }
+
+/* Campos de formulário */
+html.dark .input-field {
+  background-color: #161c28 !important;
+  border-color: #2a3242 !important;
+  color: #ECEAE6 !important;
+}
+html.dark .input-field::placeholder { color: #6F6A63 !important; }
+html.dark select.input-field option {
+  background-color: #1b2230;
+  color: #ECEAE6;
+}
+
+/* Navegação lateral */
+html.dark .nav-link { color: #9aa3b2; }
+html.dark .nav-link:hover {
+  background-color: #232c3d;
+  color: #ECEAE6;
+}
+html.dark .nav-link-active {
+  background: linear-gradient(to right, rgba(201, 163, 94, 0.18), rgba(182, 164, 255, 0.12)) !important;
+  color: #E8CE91 !important;
+  border-color: rgba(201, 163, 94, 0.35) !important;
+}
+
+/* Botões secundário / ghost */
+html.dark .btn-secondary {
+  background-color: #1b2230 !important;
+  border-color: #2a3242 !important;
+  color: #D8D5D0 !important;
+}
+html.dark .btn-secondary:hover { color: #E8CE91 !important; border-color: #C9A35E !important; }
+html.dark .btn-ghost { color: #9aa3b2; }
+html.dark .btn-ghost:hover { background-color: #232c3d; color: #ECEAE6; }
+
+/* Scrollbar */
+html.dark ::-webkit-scrollbar-thumb { background-color: #2a3242; }
+html.dark ::-webkit-scrollbar-thumb:hover { background-color: #3a4456; }
+
+/* Recharts no escuro */
+html.dark .recharts-default-tooltip {
+  background-color: #1b2230 !important;
+  border-color: #2a3242 !important;
+}
+html.dark .recharts-cartesian-grid line { stroke: #2a3242 !important; }
+html.dark .recharts-text { fill: #8C877F !important; }
