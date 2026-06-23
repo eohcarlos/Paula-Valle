@@ -1,13 +1,14 @@
 import { useState, useRef } from 'react'
-import { Camera, Save, CheckCircle2, User, Mail, Phone, Cake, Star, Shield, KeyRound } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Camera, Save, CheckCircle2, User, Star, Shield, KeyRound, LogOut } from 'lucide-react'
 import { useStore } from '@/store/store'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { Avatar } from '@/components/Logo'
-import { formatCurrency } from '@/lib/utils'
 
 export default function Profile() {
-  const { currentUser, updateUser, verifyPassword } = useStore()
+  const { currentUser, updateUser, verifyPassword, logout } = useStore()
+  const navigate = useNavigate()
   const fileRef = useRef<HTMLInputElement>(null)
   const [saved, setSaved] = useState(false)
   const [form, setForm] = useState({
@@ -52,7 +53,10 @@ export default function Profile() {
     setPwMsg('ok')
   }
 
-  const totalSpent = /* computed from appointments if needed */ 0
+  function handleLogout() {
+    logout()
+    navigate('/login')
+  }
 
   return (
     <div className="space-y-6">
@@ -207,6 +211,17 @@ export default function Profile() {
 
         </div>
       </div>
+
+      {/* Sair — visível apenas no mobile (no desktop o botão fica no sidebar) */}
+      <div className="lg:hidden">
+        <button
+          onClick={handleLogout}
+          className="flex w-full items-center justify-center gap-2 rounded-3xl border border-red-100 bg-red-50 py-4 text-sm font-semibold text-red-500 transition hover:bg-red-100"
+        >
+          <LogOut size={17} /> Sair da conta
+        </button>
+      </div>
+
     </div>
   )
 }
