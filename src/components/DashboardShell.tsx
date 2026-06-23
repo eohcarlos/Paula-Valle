@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
-import { NavLink, useNavigate, Outlet } from 'react-router-dom'
-import { Bell, LogOut, Menu, X, Check, Camera, ChevronLeft, ChevronRight } from 'lucide-react'
+import { NavLink, Link, useNavigate, Outlet } from 'react-router-dom'
+import {
+  Bell, LogOut, Menu, X, Check, Camera, ChevronLeft, ChevronRight,
+  CalendarPlus, Gift, Heart, History as HistoryIcon, CalendarCheck,
+} from 'lucide-react'
 import { Logo, Avatar } from '@/components/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { useStore } from '@/store/store'
@@ -14,6 +17,16 @@ export interface NavItem {
   end?: boolean
 }
 
+/* Bottom nav items for the client mobile bar */
+const CLIENT_BOTTOM_LEFT = [
+  { to: '/app/fidelidade', label: 'Fidelidade', Icon: Gift },
+  { to: '/app/favoritos',  label: 'Favoritos',  Icon: Heart },
+]
+const CLIENT_BOTTOM_RIGHT = [
+  { to: '/app/historico',     label: 'Histórico',     Icon: HistoryIcon },
+  { to: '/app/agendamentos',  label: 'Agendamentos',  Icon: CalendarCheck },
+]
+
 export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }) {
   const { currentUser, logout, updateUser, notifications, markAllRead, markNotificationRead } = useStore()
   const navigate = useNavigate()
@@ -21,6 +34,7 @@ export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }
   const [notifOpen, setNotifOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('salao_sidebar_collapsed') === '1')
   const photoRef = useRef<HTMLInputElement>(null)
+  const isClient = role === 'client'
 
   useEffect(() => {
     localStorage.setItem('salao_sidebar_collapsed', collapsed ? '1' : '0')
@@ -53,11 +67,9 @@ export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }
     >
       <div className={cn('flex py-5', isCollapsed ? 'flex-col items-center gap-3 px-2' : 'items-center justify-between px-5')}>
         <Logo compact={isCollapsed} />
-        {/* Fechar (mobile) */}
         <button className="lg:hidden" onClick={() => setMobileOpen(false)}>
           <X size={22} className="text-stone-400" />
         </button>
-        {/* Recolher / expandir (desktop) */}
         <button
           onClick={() => setCollapsed((c) => !c)}
           title={isCollapsed ? 'Expandir menu' : 'Recolher menu'}
@@ -117,11 +129,11 @@ export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Desktop sidebar */}
+      {/* Desktop sidebar — always shown */}
       <div className="hidden lg:block">{renderSidebar(collapsed)}</div>
 
-      {/* Mobile sidebar (sempre expandido no drawer) */}
-      {mobileOpen && (
+      {/* Mobile sidebar drawer — admin only (client uses bottom nav) */}
+      {!isClient && mobileOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div className="absolute inset-0 bg-stone-900/40 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
           <div className="absolute left-0 top-0 h-full animate-fade-in">{renderSidebar(false)}</div>
@@ -130,18 +142,31 @@ export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }
 
       {/* Main */}
       <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Header */}
         <header className="relative z-30 flex items-center justify-between border-b border-cream-200 bg-white/70 px-4 py-3 backdrop-blur lg:px-8">
-          <button className="lg:hidden" onClick={() => setMobileOpen(true)}>
-            <Menu size={24} className="text-stone-600" />
-          </button>
+
+          {/* Left: hamburger (admin mobile) or logo link (client mobile) */}
+          {isClient ? (
+            <Link to="/app" className="flex items-center gap-2 lg:hidden">
+              <Logo compact />
+            </Link>
+          ) : (
+            <button className="lg:hidden" onClick={() => setMobileOpen(true)}>
+              <Menu size={24} className="text-stone-600" />
+            </button>
+          )}
+
           <div className="hidden lg:block">
             <p className="text-sm text-stone-400">
               {role === 'admin' ? 'Painel Administrativo' : 'Painel do Cliente'}
             </p>
           </div>
 
-          <div className="relative flex items-center gap-3">
+          {/* Right actions */}
+          <div className="relative flex items-center gap-2">
             <ThemeToggle />
+
+            {/* Notifications */}
             <button
               onClick={() => setNotifOpen((o) => !o)}
               className="relative rounded-full p-2.5 text-stone-500 transition hover:bg-cream-100"
@@ -208,16 +233,126 @@ export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }
               </>
             )}
 
-            <Avatar name={currentUser?.name ?? ''} src={currentUser?.photo} size={36} />
+            {/* Avatar — client: NavLink to perfil with premium ring; admin: plain */}
+            {isClient ? (
+              <NavLink
+                to="/app/perfil"
+                className={({ isActive }) =>
+                  cn(
+                    'flex h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-offset-2 transition-all',
+                    isActive
+                      ? 'ring-gold-500 ring-offset-white'
+                      : 'ring-cream-300 ring-offset-white hover:ring-gold-400',
+                  )
+                }
+                title="Meu Perfil"
+              >
+                <Avatar name={currentUser?.name ?? ''} src={currentUser?.photo} size={40} />
+              </NavLink>
+            ) : (
+              <Avatar name={currentUser?.name ?? ''} src={currentUser?.photo} size={36} />
+            )}
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8">
+        {/* Content */}
+        <main className={cn('flex-1 overflow-y-auto p-4 lg:p-8', isClient && 'pb-28 lg:pb-8')}>
           <div className="mx-auto max-w-7xl animate-fade-in">
             <Outlet />
           </div>
         </main>
       </div>
+
+      {/* ── Client-only mobile bottom navigation ── */}
+      {isClient && (
+        <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">
+          {/* Frosted glass backdrop */}
+          <div className="absolute inset-0 border-t border-cream-200 bg-white/85 backdrop-blur-xl" />
+
+          <div className="relative flex items-end justify-around px-2 pb-safe pt-1">
+
+            {/* Left: Fidelidade + Favoritos */}
+            {CLIENT_BOTTOM_LEFT.map(({ to, label, Icon }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  cn(
+                    'flex flex-1 flex-col items-center gap-0.5 py-2 text-center transition-all',
+                    isActive ? 'text-gold-600' : 'text-stone-400 hover:text-stone-600',
+                  )
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <span className={cn(
+                      'flex h-8 w-8 items-center justify-center rounded-2xl transition-all',
+                      isActive ? 'bg-gold-400/15 scale-110' : '',
+                    )}>
+                      <Icon size={20} strokeWidth={isActive ? 2.2 : 1.8} />
+                    </span>
+                    <span className="text-[10px] font-semibold">{label}</span>
+                  </>
+                )}
+              </NavLink>
+            ))}
+
+            {/* Center: Agendar CTA */}
+            <div className="flex flex-col items-center pb-1">
+              <NavLink
+                to="/app/agendar"
+                className="flex flex-col items-center gap-1"
+              >
+                {({ isActive }) => (
+                  <>
+                    <span className={cn(
+                      'flex h-14 w-14 -translate-y-3 items-center justify-center rounded-full shadow-gold transition-transform active:scale-95',
+                      isActive
+                        ? 'bg-gradient-to-br from-gold-300 to-gold-500 ring-4 ring-gold-300/40 ring-offset-2'
+                        : 'bg-gradient-to-br from-gold-400 to-gold-600 hover:scale-105',
+                    )}>
+                      <CalendarPlus size={24} className="text-white" strokeWidth={2} />
+                    </span>
+                    <span className={cn(
+                      '-mt-2 text-[10px] font-bold uppercase tracking-wide',
+                      isActive ? 'text-gold-600' : 'text-stone-500',
+                    )}>
+                      Agendar
+                    </span>
+                  </>
+                )}
+              </NavLink>
+            </div>
+
+            {/* Right: Histórico + Meus Agendamentos */}
+            {CLIENT_BOTTOM_RIGHT.map(({ to, label, Icon }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  cn(
+                    'flex flex-1 flex-col items-center gap-0.5 py-2 text-center transition-all',
+                    isActive ? 'text-gold-600' : 'text-stone-400 hover:text-stone-600',
+                  )
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <span className={cn(
+                      'flex h-8 w-8 items-center justify-center rounded-2xl transition-all',
+                      isActive ? 'bg-gold-400/15 scale-110' : '',
+                    )}>
+                      <Icon size={20} strokeWidth={isActive ? 2.2 : 1.8} />
+                    </span>
+                    <span className="text-[10px] font-semibold">{label}</span>
+                  </>
+                )}
+              </NavLink>
+            ))}
+
+          </div>
+        </nav>
+      )}
     </div>
   )
 }

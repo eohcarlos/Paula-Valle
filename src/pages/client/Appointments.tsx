@@ -31,13 +31,13 @@ import {
 import { daySlots } from '@/lib/availability'
 import type { Appointment, AppointmentStatus } from '@/types'
 
-const FILTERS: { key: AppointmentStatus | 'all'; label: string; emoji: string }[] = [
-  { key: 'all',        label: 'Todos',           emoji: '📋' },
-  { key: 'scheduled',  label: 'Agendados',        emoji: '🗓️' },
-  { key: 'confirmed',  label: 'Confirmados',      emoji: '✅' },
-  { key: 'in_progress',label: 'Em atendimento',   emoji: '💇' },
-  { key: 'completed',  label: 'Finalizados',      emoji: '🌟' },
-  { key: 'canceled',   label: 'Cancelados',       emoji: '❌' },
+const FILTERS: { key: AppointmentStatus | 'all'; label: string }[] = [
+  { key: 'all',         label: 'Todos' },
+  { key: 'scheduled',   label: 'Agendados' },
+  { key: 'confirmed',   label: 'Confirmados' },
+  { key: 'in_progress', label: 'Em atendimento' },
+  { key: 'completed',   label: 'Finalizados' },
+  { key: 'canceled',    label: 'Cancelados' },
 ]
 
 const STATUS_BAR: Record<AppointmentStatus, string> = {
@@ -131,7 +131,6 @@ export default function ClientAppointments() {
                   : 'border-cream-200 bg-white text-stone-500 hover:border-gold-300 hover:shadow-sm',
               )}
             >
-              <span className="text-base sm:text-sm">{f.emoji}</span>
               <span className="text-xs font-semibold sm:text-sm sm:font-medium">{f.label}</span>
               {count > 0 && (
                 <span className={cn(
