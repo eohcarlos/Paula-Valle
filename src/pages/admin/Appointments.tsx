@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { Input, Select, Textarea } from '@/components/ui/Input'
 import { AppointmentDetailsModal } from '@/components/AppointmentDetailsModal'
-import { cn, formatCurrency, formatDateShort, isAppointmentLate, todayISO, STATUS_META } from '@/lib/utils'
+import { cn, formatCurrency, formatDateShort, isAppointmentLate, nowTimeBR, todayISO, STATUS_META } from '@/lib/utils'
 import { daySlots } from '@/lib/availability'
 import type { Appointment, AppointmentStatus } from '@/types'
 
@@ -284,7 +284,10 @@ function AppointmentForm({ appointment, onClose }: { appointment: Appointment | 
 
   const total = selected.reduce((s, id) => s + (services.find((x) => x.id === id)?.price ?? 0), 0)
   const duration = selected.reduce((s, id) => s + (services.find((x) => x.id === id)?.duration ?? 0), 0)
-  const slots = daySlots(date, settings, appointments, appointment?.id, duration)
+  const allSlots = daySlots(date, settings, appointments, appointment?.id, duration)
+  const slots = !appointment && date === todayISO()
+    ? allSlots.filter((s) => s.time >= nowTimeBR())
+    : allSlots
 
   function toggle(id: string) {
     setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))
@@ -339,7 +342,18 @@ function AppointmentForm({ appointment, onClose }: { appointment: Appointment | 
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Input label="Data" type="date" value={date} onChange={(e) => { setDate(e.target.value); setTime('') }} />
+          <Input
+            label="Data"
+            type="date"
+            value={date}
+            min={!appointment ? todayISO() : undefined}
+            onChange={(e) => {
+              const picked = e.target.value
+              if (!appointment && (!picked || picked < todayISO())) return
+              setDate(picked)
+              setTime('')
+            }}
+          />
           <Select label="Horário" value={time} onChange={(e) => setTime(e.target.value)}>
             <option value="">Selecione</option>
             {slots.map((s) => (
