@@ -165,7 +165,9 @@ export default function Booking() {
               min={todayISO()}
               max={maxDate}
               onChange={(e) => {
-                setDate(e.target.value)
+                const picked = e.target.value
+                if (!picked || picked < todayISO()) return
+                setDate(picked)
                 setTime('')
               }}
               className="input-field mt-3 max-w-xs"
