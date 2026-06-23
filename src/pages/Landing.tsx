@@ -66,8 +66,6 @@ export default function Landing() {
         <div className="absolute inset-0 bg-gradient-to-r from-stone-950/95 via-stone-900/80 to-stone-800/30" />
         {/* Overlay radial dourado */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_20%_50%,rgba(201,163,94,0.22),transparent_60%)]" />
-        {/* Linha dourada decorativa vertical */}
-        <div className="pointer-events-none absolute left-[42%] top-0 hidden h-full w-px bg-gradient-to-b from-transparent via-gold-500/30 to-transparent lg:block" />
 
         {/* Conteúdo */}
         <div className="relative mx-auto flex h-full max-w-6xl flex-col justify-center px-6 py-24 sm:px-10 lg:px-16" style={{ minHeight: '88vh' }}>
@@ -128,8 +126,6 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Gradiente inferior para transição suave */}
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FAF6F0] to-transparent" />
       </section>
 
       {/* Diferenciais */}
