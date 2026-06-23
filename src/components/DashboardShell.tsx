@@ -3,7 +3,6 @@ import { NavLink, Link, useNavigate, Outlet } from 'react-router-dom'
 import {
   Bell, LogOut, Menu, X, Check, Camera, ChevronLeft, ChevronRight,
   CalendarPlus, Gift, Heart, History as HistoryIcon, CalendarCheck,
-  LayoutDashboard, CalendarDays, Users, Scissors,
 } from 'lucide-react'
 import { Logo, Avatar } from '@/components/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -28,16 +27,6 @@ const CLIENT_BOTTOM_RIGHT = [
   { to: '/app/agendamentos',  label: 'Agendamentos',  Icon: CalendarCheck },
 ]
 
-/* Bottom nav items for the admin mobile bar */
-const ADMIN_BOTTOM_LEFT = [
-  { to: '/admin',        label: 'Dashboard', Icon: LayoutDashboard, end: true },
-  { to: '/admin/agenda', label: 'Agenda',    Icon: CalendarDays },
-]
-const ADMIN_BOTTOM_CENTER = { to: '/admin/agendamentos', label: 'Agendamentos', Icon: CalendarCheck }
-const ADMIN_BOTTOM_RIGHT = [
-  { to: '/admin/clientes', label: 'Clientes', Icon: Users },
-  { to: '/admin/servicos', label: 'Serviços', Icon: Scissors },
-]
 
 export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }) {
   const { currentUser, logout, updateUser, notifications, markAllRead, markNotificationRead } = useStore()
@@ -270,25 +259,24 @@ export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-4 pb-28 lg:p-8 lg:pb-8">
+        <main className={cn('flex-1 overflow-y-auto p-4 lg:p-8', isClient && 'pb-28 lg:pb-8')}>
           <div className="mx-auto max-w-7xl animate-fade-in">
             <Outlet />
           </div>
         </main>
       </div>
 
-      {/* ── Mobile bottom navigation (both roles) ── */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">
+      {/* ── Mobile bottom navigation (client only) ── */}
+      {isClient && <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">
         <div className="absolute inset-0 border-t border-cream-200 bg-white/85 backdrop-blur-xl" />
 
         <div className="relative flex items-end justify-around px-2 pb-safe pt-1">
 
-          {/* Left items */}
-          {(isClient ? CLIENT_BOTTOM_LEFT : ADMIN_BOTTOM_LEFT).map(({ to, label, Icon, ...rest }) => (
+          {/* Left: Fidelidade + Favoritos */}
+          {CLIENT_BOTTOM_LEFT.map(({ to, label, Icon }) => (
             <NavLink
               key={to}
               to={to}
-              end={'end' in rest ? (rest as { end?: boolean }).end : false}
               className={({ isActive }) =>
                 cn(
                   'flex flex-1 flex-col items-center gap-0.5 py-2 text-center transition-all',
@@ -310,12 +298,9 @@ export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }
             </NavLink>
           ))}
 
-          {/* Center CTA */}
+          {/* Center: Agendar CTA */}
           <div className="flex flex-col items-center pb-1">
-            <NavLink
-              to={isClient ? '/app/agendar' : ADMIN_BOTTOM_CENTER.to}
-              className="flex flex-col items-center gap-1"
-            >
+            <NavLink to="/app/agendar" className="flex flex-col items-center gap-1">
               {({ isActive }) => (
                 <>
                   <span className={cn(
@@ -324,24 +309,21 @@ export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }
                       ? 'bg-gradient-to-br from-gold-300 to-gold-500 ring-4 ring-gold-300/40 ring-offset-2'
                       : 'bg-gradient-to-br from-gold-400 to-gold-600 hover:scale-105',
                   )}>
-                    {isClient
-                      ? <CalendarPlus size={24} className="text-white" strokeWidth={2} />
-                      : <CalendarCheck size={24} className="text-white" strokeWidth={2} />
-                    }
+                    <CalendarPlus size={24} className="text-white" strokeWidth={2} />
                   </span>
                   <span className={cn(
                     '-mt-2 text-[10px] font-bold uppercase tracking-wide',
                     isActive ? 'text-gold-600' : 'text-stone-500',
                   )}>
-                    {isClient ? 'Agendar' : 'Agendamentos'}
+                    Agendar
                   </span>
                 </>
               )}
             </NavLink>
           </div>
 
-          {/* Right items */}
-          {(isClient ? CLIENT_BOTTOM_RIGHT : ADMIN_BOTTOM_RIGHT).map(({ to, label, Icon }) => (
+          {/* Right: Histórico + Agendamentos */}
+          {CLIENT_BOTTOM_RIGHT.map(({ to, label, Icon }) => (
             <NavLink
               key={to}
               to={to}
@@ -367,7 +349,7 @@ export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }
           ))}
 
         </div>
-      </nav>
+      </nav>}
     </div>
   )
 }
