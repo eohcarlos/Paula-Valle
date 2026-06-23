@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   ResponsiveContainer,
   AreaChart,
@@ -32,7 +32,7 @@ import {
 import { useStore } from '@/store/store'
 import { StatCard } from '@/components/ui/StatCard'
 import { StatusBadge } from '@/components/ui/Badge'
-import { formatCurrency, todayISO } from '@/lib/utils'
+import { cn, formatCurrency, todayISO } from '@/lib/utils'
 import { format, subDays, startOfWeek, endOfWeek, parseISO, isWithinInterval } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
@@ -111,10 +111,16 @@ export default function AdminDashboard() {
       .slice(0, 6)
   }, [appointments, services])
 
-  const nowTime = format(new Date(), 'HH:mm')
+  // Atualiza a cada minuto para que atendimentos saiam de "próximos" e entrem em "atrasados" sem precisar recarregar a página
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 30_000)
+    return () => clearInterval(id)
+  }, [])
+  const nowTime = format(now, 'HH:mm')
   const upcomingToday = stats.todays
     .filter((a) => ['scheduled', 'confirmed', 'in_progress'].includes(a.status))
-    .filter((a) => a.status === 'in_progress' || a.time >= nowTime)
+    .map((a) => ({ ...a, isLate: a.status !== 'in_progress' && a.time < nowTime }))
     .sort((a, b) => a.time.localeCompare(b.time))
 
   return (
@@ -218,14 +224,21 @@ export default function AdminDashboard() {
           ) : (
             <div className="space-y-2">
               {upcomingToday.map((a) => (
-                <div key={a.id} className="flex items-center gap-4 rounded-2xl border border-cream-200 px-4 py-3">
-                  <span className="font-serif text-lg font-semibold text-gold-700">{a.time}</span>
+                <div
+                  key={a.id}
+                  className={cn(
+                    'flex items-center gap-4 rounded-2xl border px-4 py-3',
+                    a.isLate ? 'border-red-200 bg-red-50/50' : 'border-cream-200',
+                  )}
+                >
+                  <span className={cn('font-serif text-lg font-semibold', a.isLate ? 'text-red-600' : 'text-gold-700')}>{a.time}</span>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-stone-700">{a.clientName}</p>
                     <p className="text-xs text-stone-400">
                       {a.serviceIds.map((id) => services.find((s) => s.id === id)?.name).join(', ')}
                     </p>
                   </div>
+                  {a.isLate && <span className="text-xs font-semibold uppercase tracking-wide text-red-500">Atrasado</span>}
                   <StatusBadge status={a.status} />
                 </div>
               ))}
