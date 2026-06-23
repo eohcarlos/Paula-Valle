@@ -133,7 +133,7 @@ export default function Settings() {
                 <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-gold-300 to-gold-600">
                   {form.logo
                     ? <img src={form.logo} alt="logo" className="h-full w-full object-cover" />
-                    : <span className="font-serif text-2xl font-bold text-white">PV</span>
+                    : <img src="/logo.png" alt="Paula Valle Studio" className="h-full w-full object-contain p-1" />
                   }
                 </div>
                 <button

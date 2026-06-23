@@ -3,13 +3,18 @@ import { cn } from '@/lib/utils'
 export function Logo({ className, compact = false }: { className?: string; compact?: boolean }) {
   return (
     <div className={cn('flex items-center gap-3', className)}>
-      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-gold-300 to-gold-600 shadow-gold">
-        <span className="font-serif text-xl font-bold text-white">PV</span>
-      </div>
+      <img
+        src="/logo.png"
+        alt="Paula Valle Studio"
+        className={cn(
+          'object-contain',
+          compact ? 'h-10 w-10' : 'h-11 w-11',
+        )}
+      />
       {!compact && (
         <div className="leading-tight">
           <p className="font-serif text-lg font-semibold text-stone-800">Paula Valle</p>
-          <p className="text-[10px] uppercase tracking-[0.18em] text-gold-600">Cachos &amp; Tranças</p>
+          <p className="text-[10px] uppercase tracking-[0.18em] text-gold-600">Studio</p>
         </div>
       )}
     </div>
