@@ -132,7 +132,7 @@ export default function Booking() {
 
   /* ── Página principal ────────────────────────────────────────── */
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-28 lg:pb-0">
 
       {/* Hero header */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-stone-800 via-stone-700 to-stone-900 px-7 py-9 sm:px-10">
@@ -376,8 +376,8 @@ export default function Booking() {
 
         </div>
 
-        {/* Sidebar — Resumo sticky */}
-        <div className="min-w-0 lg:sticky lg:top-4 lg:h-fit">
+        {/* Sidebar — Resumo sticky (desktop only) */}
+        <div className="hidden lg:block lg:sticky lg:top-[84px] lg:h-fit">
           <div className="overflow-hidden rounded-3xl border border-gold-300/40 shadow-soft">
             <div className="bg-gradient-to-br from-stone-800 to-stone-900 px-5 py-4">
               <p className="text-[10px] font-bold uppercase tracking-widest text-gold-500">Resumo do pedido</p>
@@ -451,6 +451,36 @@ export default function Booking() {
               </p>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Barra fixa inferior — mobile only */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 lg:hidden">
+        <div className="border-t border-cream-200 bg-white/90 px-4 py-3 backdrop-blur-md">
+          {selected.length === 0 ? (
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-stone-400">Selecione um serviço para começar</p>
+              <span className="font-serif text-2xl font-semibold text-stone-300">R$ —</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="truncate text-xs text-stone-400">
+                  {selected.map((id) => services.find((x) => x.id === id)?.name).join(', ')}
+                </p>
+                <p className="font-serif text-xl font-semibold text-gold-700">{formatCurrency(total)}</p>
+              </div>
+              <Button
+                size="lg"
+                disabled={!time}
+                onClick={confirm}
+                className="shrink-0"
+              >
+                {time ? 'Confirmar' : 'Escolha o horário'}
+                {time && <ArrowRight size={17} />}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
