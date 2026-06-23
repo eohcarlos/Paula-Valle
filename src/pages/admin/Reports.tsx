@@ -5,9 +5,9 @@ import { useStore } from '@/store/store'
 import { SectionTitle } from '@/components/ui/Card'
 import { StatCard } from '@/components/ui/StatCard'
 import { Button } from '@/components/ui/Button'
-import { cn, formatCurrency, formatDateShort } from '@/lib/utils'
+import { cn, formatCurrency, formatDateShort, nowBR } from '@/lib/utils'
 import { exportToPDF, exportToExcel } from '@/lib/export'
-import { subDays, subMonths, parseISO, isAfter } from 'date-fns'
+import { subDays, subMonths, parseISO, isAfter, format } from 'date-fns'
 
 type Period = 'day' | 'week' | 'month'
 
@@ -16,7 +16,7 @@ export default function Reports() {
   const [period, setPeriod] = useState<Period>('month')
 
   const since = useMemo(() => {
-    const now = new Date()
+    const now = nowBR()
     if (period === 'day') return subDays(now, 1)
     if (period === 'week') return subDays(now, 7)
     return subMonths(now, 1)
@@ -65,7 +65,7 @@ export default function Reports() {
   function exportPDF() {
     exportToPDF(
       `Relatório ${labels[period]}`,
-      `Salão Paula Valle • Gerado em ${formatDateShort(new Date().toISOString())}`,
+      `Salão Paula Valle • Gerado em ${format(nowBR(), 'dd/MM/yyyy')}`,
       ['Data', 'Cliente', 'Serviços', 'Profissional', 'Valor'],
       completed.map((a) => [
         formatDateShort(a.date),

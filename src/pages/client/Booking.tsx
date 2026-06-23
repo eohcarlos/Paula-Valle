@@ -6,7 +6,7 @@ import { SectionTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Textarea } from '@/components/ui/Input'
 import { daySlots, isWorkingDay } from '@/lib/availability'
-import { cn, formatCurrency, todayISO, WEEKDAYS_FULL } from '@/lib/utils'
+import { cn, formatCurrency, nowBR, todayISO, WEEKDAYS_FULL } from '@/lib/utils'
 import { format, addDays, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
@@ -31,8 +31,8 @@ export default function Booking() {
 
   // Janela de agendamento configurável (até X dias à frente)
   const windowDays = settings.bookingWindowDays || 14
-  const quickDays = Array.from({ length: windowDays }, (_, i) => format(addDays(new Date(), i), 'yyyy-MM-dd'))
-  const maxDate = format(addDays(new Date(), windowDays - 1), 'yyyy-MM-dd')
+  const quickDays = Array.from({ length: windowDays }, (_, i) => format(addDays(nowBR(), i), 'yyyy-MM-dd'))
+  const maxDate = format(addDays(nowBR(), windowDays - 1), 'yyyy-MM-dd')
 
   function toggleService(id: string) {
     setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))

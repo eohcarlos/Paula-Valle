@@ -38,8 +38,38 @@ export function formatWeekday(iso: string): string {
   }
 }
 
+const BR_TIMEZONE = 'America/Sao_Paulo'
+
+/**
+ * Retorna um Date cujos campos locais (ano/mês/dia/hora/minuto) representam o horário
+ * de Brasília "agora", independente do fuso configurado no dispositivo/navegador do usuário.
+ * Use esta função (em vez de `new Date()`) sempre que precisar do "hoje"/"agora" do salão.
+ */
+export function nowBR(): Date {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: BR_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).formatToParts(new Date())
+
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '00'
+  const hour = get('hour') === '24' ? '00' : get('hour')
+  return new Date(
+    `${get('year')}-${get('month')}-${get('day')}T${hour}:${get('minute')}:${get('second')}`,
+  )
+}
+
 export function todayISO(): string {
-  return format(new Date(), 'yyyy-MM-dd')
+  return format(nowBR(), 'yyyy-MM-dd')
+}
+
+export function nowTimeBR(): string {
+  return format(nowBR(), 'HH:mm')
 }
 
 export function nowISO(): string {

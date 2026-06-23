@@ -32,7 +32,7 @@ import {
 import { useStore } from '@/store/store'
 import { StatCard } from '@/components/ui/StatCard'
 import { StatusBadge } from '@/components/ui/Badge'
-import { cn, formatCurrency, todayISO } from '@/lib/utils'
+import { cn, formatCurrency, nowBR, todayISO } from '@/lib/utils'
 import { format, subDays, startOfWeek, endOfWeek, parseISO, isWithinInterval } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
@@ -46,8 +46,8 @@ export default function AdminDashboard() {
   const stats = useMemo(() => {
     const active = appointments.filter((a) => a.status !== 'canceled')
     const todays = active.filter((a) => a.date === today)
-    const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 })
-    const weekEnd = endOfWeek(new Date(), { weekStartsOn: 1 })
+    const weekStart = startOfWeek(nowBR(), { weekStartsOn: 1 })
+    const weekEnd = endOfWeek(nowBR(), { weekStartsOn: 1 })
     const week = active.filter((a) => isWithinInterval(parseISO(a.date), { start: weekStart, end: weekEnd }))
     const completed = appointments.filter((a) => a.status === 'completed')
     const todayRevenue = completed.filter((a) => a.date === today).reduce((s, a) => s + a.total, 0)
@@ -91,7 +91,7 @@ export default function AdminDashboard() {
   // Faturamento últimos 7 dias
   const revenueData = useMemo(() => {
     return Array.from({ length: 7 }, (_, i) => {
-      const d = format(subDays(new Date(), 6 - i), 'yyyy-MM-dd')
+      const d = format(subDays(nowBR(), 6 - i), 'yyyy-MM-dd')
       const total = appointments
         .filter((a) => a.date === d && a.status === 'completed')
         .reduce((s, a) => s + a.total, 0)
@@ -112,9 +112,9 @@ export default function AdminDashboard() {
   }, [appointments, services])
 
   // Atualiza a cada minuto para que atendimentos saiam de "próximos" e entrem em "atrasados" sem precisar recarregar a página
-  const [now, setNow] = useState(() => new Date())
+  const [now, setNow] = useState(nowBR)
   useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 30_000)
+    const id = setInterval(() => setNow(nowBR()), 30_000)
     return () => clearInterval(id)
   }, [])
   const nowTime = format(now, 'HH:mm')
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
     <div className="space-y-7">
       <div>
         <h1 className="font-serif text-3xl font-semibold">Dashboard</h1>
-        <p className="text-stone-500">{format(new Date(), "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
+        <p className="text-stone-500">{format(now, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
       </div>
 
       {/* Operacional */}

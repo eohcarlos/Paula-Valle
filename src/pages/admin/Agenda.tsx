@@ -4,7 +4,7 @@ import { useStore } from '@/store/store'
 import { SectionTitle } from '@/components/ui/Card'
 import { StatusBadge } from '@/components/ui/Badge'
 import { AppointmentDetailsModal } from '@/components/AppointmentDetailsModal'
-import { cn, generateTimeSlots, WEEKDAYS } from '@/lib/utils'
+import { cn, generateTimeSlots, nowBR, WEEKDAYS } from '@/lib/utils'
 import { dayRanges, scheduleRange } from '@/lib/availability'
 import { format, addDays, startOfWeek } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -18,7 +18,7 @@ function pickApt(list: Appointment[]): Appointment | undefined {
 export default function Agenda() {
   const { appointments, services, settings } = useStore()
   const [view, setView] = useState<'day' | 'week'>('day')
-  const [cursor, setCursor] = useState(new Date())
+  const [cursor, setCursor] = useState(nowBR)
   const [selected, setSelected] = useState<Appointment | null>(null)
 
   const range = scheduleRange(settings)
@@ -112,7 +112,7 @@ export default function Agenda() {
             <div className="grid grid-cols-8 border-b border-cream-200 bg-cream-50 text-center text-xs font-semibold text-stone-500">
               <div className="py-3" />
               {weekDays.map((d) => (
-                <div key={d.toISOString()} className={cn('py-3', format(d, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && 'text-gold-700')}>
+                <div key={d.toISOString()} className={cn('py-3', format(d, 'yyyy-MM-dd') === format(nowBR(), 'yyyy-MM-dd') && 'text-gold-700')}>
                   <p>{WEEKDAYS[d.getDay()]}</p>
                   <p className="text-base font-bold">{format(d, 'dd')}</p>
                 </div>
