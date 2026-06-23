@@ -75,8 +75,8 @@ export default function AdminAppointments() {
         action={<Button onClick={() => setEditing('new')}><Plus size={16} /> Novo agendamento</Button>}
       />
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex flex-1 gap-2 overflow-x-auto">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-1 sm:overflow-x-auto">
           {FILTERS.map((f) => (
             <button
               key={f.key}
@@ -96,12 +96,66 @@ export default function AdminAppointments() {
             placeholder="Buscar cliente ou serviço"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="input-field w-64 pl-9 py-2"
+            className="input-field w-full pl-9 py-2 sm:w-64"
           />
         </div>
       </div>
 
-      <div className="card overflow-x-auto p-0">
+      {/* Mobile: cards */}
+      <div className="space-y-3 md:hidden">
+        {rows.length === 0 && (
+          <div className="card py-12 text-center text-stone-400">Nenhum agendamento encontrado.</div>
+        )}
+        {rows.map((a, i) => {
+          const todayKey = todayISO()
+          const aPast = a.date < todayKey
+          const prevPast = i > 0 ? rows[i - 1].date < todayKey : null
+          const showUpcomingLabel = i === 0 && !aPast
+          const showHistoryLabel = aPast && (i === 0 || prevPast === false)
+          return (
+            <Fragment key={a.id}>
+              {showUpcomingLabel && (
+                <p className="px-1 pt-2 text-xs font-semibold uppercase tracking-wider text-gold-700">Próximos atendimentos</p>
+              )}
+              {showHistoryLabel && (
+                <p className="px-1 pt-2 text-xs font-semibold uppercase tracking-wider text-stone-400">Histórico</p>
+              )}
+              <div className="card space-y-3 p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="font-medium text-stone-700">{a.clientName}</p>
+                    <p className="text-xs text-stone-400">{formatDateShort(a.date)} · {a.time}</p>
+                  </div>
+                  <StatusBadge status={a.status} />
+                </div>
+                <p className="text-sm text-stone-500">{svcNames(a.serviceIds)}</p>
+                <div className="flex items-center justify-between border-t border-cream-100 pt-3">
+                  <span className="font-semibold text-gold-700">{formatCurrency(a.total)}</span>
+                  <div className="flex items-center gap-1">
+                    <IconBtn title="Ver detalhes" onClick={() => setDetails(a)} className="text-stone-500"><Eye size={16} /></IconBtn>
+                    {a.status === 'scheduled' && (
+                      <IconBtn title="Confirmar" onClick={() => setAppointmentStatus(a.id, 'confirmed')} className="text-gold-600"><Check size={16} /></IconBtn>
+                    )}
+                    {a.status === 'confirmed' && (
+                      <IconBtn title="Iniciar atendimento" onClick={() => setAppointmentStatus(a.id, 'in_progress')} className="text-sky-600"><Play size={16} /></IconBtn>
+                    )}
+                    {a.status === 'in_progress' && (
+                      <IconBtn title="Finalizar" onClick={() => setAppointmentStatus(a.id, 'completed')} className="text-emerald-600"><CheckCircle2 size={16} /></IconBtn>
+                    )}
+                    <IconBtn title="Editar" onClick={() => setEditing(a)} className="text-stone-500"><Pencil size={16} /></IconBtn>
+                    {a.status !== 'canceled' && a.status !== 'completed' && (
+                      <IconBtn title="Cancelar" onClick={() => setAppointmentStatus(a.id, 'canceled')} className="text-red-500"><XCircle size={16} /></IconBtn>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </Fragment>
+          )
+        })}
+      </div>
+
+      {/* Desktop: table */}
+      <div className="card hidden overflow-x-auto p-0 md:block">
         <table className="w-full min-w-[760px] text-sm">
           <thead>
             <tr className="border-b border-cream-200 bg-cream-50 text-left text-xs uppercase tracking-wide text-stone-400">
