@@ -51,92 +51,85 @@ export default function Landing() {
         </div>
       </header>
 
-      {/* Hero — banana gold */}
-      <section className="mx-auto max-w-6xl px-5 pt-8 pb-10 animate-fade-in">
-        <div className="relative overflow-hidden rounded-[2.5rem] shadow-2xl" style={{ minHeight: 480 }}>
+      {/* Hero — full bleed */}
+      <section className="relative animate-fade-in overflow-hidden" style={{ minHeight: '88vh' }}>
 
-          {/* Fundo banana: amarelo-dourado vibrante */}
-          <div className="absolute inset-0 bg-[#E8A800]" />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#FFD000] via-[#E8A800] to-[#B8760A]" />
+        {/* Modelo como fundo full */}
+        <img
+          src="/auth-model.jpg"
+          alt="Paula Valle Studio"
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ objectPosition: '60% center' }}
+        />
 
-          {/* Texturas decorativas */}
-          <div className="pointer-events-none absolute -left-20 -top-20 h-80 w-80 rounded-full bg-white/10" />
-          <div className="pointer-events-none absolute -right-10 bottom-0 h-96 w-96 rounded-full bg-[#7A4E00]/20" />
-          <div className="pointer-events-none absolute left-1/3 top-0 h-px w-2/3 bg-white/20" />
-          <div className="pointer-events-none absolute bottom-12 left-8 h-px w-1/4 bg-white/30" />
+        {/* Overlay: esquerda opaca em stone/escuro, direita transparente para revelar modelo */}
+        <div className="absolute inset-0 bg-gradient-to-r from-stone-950/95 via-stone-900/80 to-stone-800/30" />
+        {/* Overlay radial dourado */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_20%_50%,rgba(201,163,94,0.22),transparent_60%)]" />
+        {/* Linha dourada decorativa vertical */}
+        <div className="pointer-events-none absolute left-[42%] top-0 hidden h-full w-px bg-gradient-to-b from-transparent via-gold-500/30 to-transparent lg:block" />
 
-          {/* Grid: texto | modelo */}
-          <div className="relative grid h-full lg:grid-cols-[1fr_420px]" style={{ minHeight: 480 }}>
+        {/* Conteúdo */}
+        <div className="relative mx-auto flex h-full max-w-6xl flex-col justify-center px-6 py-24 sm:px-10 lg:px-16" style={{ minHeight: '88vh' }}>
+          <div className="max-w-lg">
+            {/* Chip */}
+            <span className="inline-flex items-center gap-2 rounded-full border border-gold-500/40 bg-gold-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold-400 backdrop-blur-sm">
+              <Sparkles size={11} /> Studio de Beleza • Itu / SP
+            </span>
 
-            {/* Esquerda — copy */}
-            <div className="flex flex-col justify-center gap-6 px-8 py-12 sm:px-12 lg:px-14">
-              {/* Chip */}
-              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/30 bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white backdrop-blur-sm">
-                <Sparkles size={12} /> Studio • Itu / SP
-              </span>
+            {/* Título */}
+            <h1 className="mt-5 font-serif text-6xl font-bold leading-none text-white sm:text-7xl lg:text-8xl">
+              Paula<br />
+              <span className="text-gold-400">Valle</span>
+            </h1>
 
-              {/* Título */}
-              <div>
-                <h1 className="font-serif text-5xl font-bold leading-tight text-white drop-shadow sm:text-6xl lg:text-7xl">
-                  Paula<br />Valle
-                </h1>
-                <p className="mt-2 text-lg font-semibold uppercase tracking-[0.22em] text-white/80">
-                  Especialista em Curvaturas
-                </p>
-              </div>
+            {/* Subtítulo */}
+            <p className="mt-4 text-sm font-semibold uppercase tracking-[0.28em] text-stone-400">
+              Especialista em Curvaturas
+            </p>
 
-              {/* Linha dourada */}
-              <div className="flex items-center gap-3">
-                <span className="h-px w-10 bg-white/60" />
-                <p className="text-sm font-medium text-white/80">Cachos · Crespos · Tranças</p>
-                <span className="h-px flex-1 bg-white/30" />
-              </div>
-
-              {/* Frase */}
-              <p className="max-w-sm text-white/90 leading-relaxed">
-                Te entrego cachos <strong className="text-white">saudáveis, definidos e sem frizz</strong>,
-                independente da curvatura.
-              </p>
-
-              {/* CTAs */}
-              <div className="flex flex-wrap gap-3">
-                <Link to="/cadastro">
-                  <button className="group flex items-center gap-2 rounded-2xl bg-stone-900 px-6 py-3.5 text-sm font-bold text-white shadow-lg transition hover:scale-105 hover:bg-stone-800">
-                    Agendar agora
-                    <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-                  </button>
-                </Link>
-                <a href={wppHero} target="_blank" rel="noopener noreferrer">
-                  <button className="flex items-center gap-2 rounded-2xl border border-white/40 bg-white/15 px-6 py-3.5 text-sm font-bold text-white backdrop-blur-sm transition hover:bg-white/25">
-                    <MessageCircle size={16} /> WhatsApp
-                  </button>
-                </a>
-              </div>
-
-              {/* Stars */}
-              <div className="flex items-center gap-1.5">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={14} className="fill-white text-white" />
-                ))}
-                <span className="ml-1 text-xs font-medium text-white/80">Excelência em cada curvatura</span>
-              </div>
+            {/* Divisor */}
+            <div className="mt-6 flex items-center gap-4">
+              <div className="h-px w-8 bg-gold-500" />
+              <p className="text-sm text-stone-300">Cachos · Crespos · Tranças · Sem química</p>
             </div>
 
-            {/* Direita — modelo */}
-            <div className="relative hidden lg:block">
-              {/* Borda decorativa interna */}
-              <div className="pointer-events-none absolute inset-y-6 left-0 w-px bg-white/20" />
-              <img
-                src="/auth-model.jpg"
-                alt="Paula Valle Studio"
-                className="h-full w-full object-cover object-center"
-                style={{ objectPosition: '30% center' }}
-              />
-              {/* Overlay suave à esquerda para fundir com o fundo */}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#E8A800]/60 via-transparent to-transparent" />
+            {/* Frase */}
+            <p className="mt-6 text-base leading-relaxed text-stone-300">
+              Te entrego cachos{' '}
+              <span className="font-semibold text-white">saudáveis, definidos e sem frizz</span>,
+              <br className="hidden sm:block" /> independente da curvatura.
+            </p>
+
+            {/* CTAs */}
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link to="/cadastro">
+                <button className="group flex items-center gap-2 rounded-2xl bg-gradient-to-r from-gold-400 to-gold-600 px-7 py-4 text-sm font-bold text-white shadow-gold transition hover:scale-105 active:scale-100">
+                  Fazer meu agendamento
+                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                </button>
+              </Link>
+              <a href={wppHero} target="_blank" rel="noopener noreferrer">
+                <button className="flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-7 py-4 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
+                  <MessageCircle size={16} /> WhatsApp
+                </button>
+              </a>
+            </div>
+
+            {/* Stars */}
+            <div className="mt-8 flex items-center gap-2">
+              <div className="flex gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={14} className="fill-gold-400 text-gold-400" />
+                ))}
+              </div>
+              <span className="text-xs text-stone-400">Excelência em cada curvatura</span>
             </div>
           </div>
         </div>
+
+        {/* Gradiente inferior para transição suave */}
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FAF6F0] to-transparent" />
       </section>
 
       {/* Diferenciais */}
