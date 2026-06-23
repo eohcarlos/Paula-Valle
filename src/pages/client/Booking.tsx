@@ -151,7 +151,8 @@ export default function Booking() {
         </div>
       </div>
 
-      {/* Stepper */}
+      {/* Stepper — fixo enquanto o usuário rola a página */}
+      <div className="sticky top-0 z-20 -mx-4 rounded-2xl bg-cream-50/80 px-4 py-3 backdrop-blur-md lg:-mx-8 lg:px-8">
       <div className="flex items-center px-1">
         {STEPS.map((step, i) => {
           const isStepDone =
@@ -190,6 +191,7 @@ export default function Booking() {
             </div>
           )
         })}
+      </div>
       </div>
 
       {/* Corpo */}
