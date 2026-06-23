@@ -76,6 +76,19 @@ export function nowISO(): string {
   return new Date().toISOString()
 }
 
+/**
+ * Um agendamento está "atrasado" quando já passou da data/hora marcada mas ainda está
+ * em um status que depende de ação (agendado/confirmado). "Em atendimento" não é atrasado
+ * (está acontecendo agora) e "finalizado"/"cancelado" já são estados finais.
+ */
+export function isAppointmentLate(date: string, time: string, status: AppointmentStatus): boolean {
+  if (status !== 'scheduled' && status !== 'confirmed') return false
+  const today = todayISO()
+  if (date < today) return true
+  if (date > today) return false
+  return time < nowTimeBR()
+}
+
 export const STATUS_META: Record<
   AppointmentStatus,
   { label: string; classes: string; dot: string }

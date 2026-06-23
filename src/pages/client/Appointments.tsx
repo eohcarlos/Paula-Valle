@@ -6,7 +6,7 @@ import { SectionTitle } from '@/components/ui/Card'
 import { StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
-import { cn, formatCurrency, formatDate, formatDateShort, todayISO } from '@/lib/utils'
+import { cn, formatCurrency, formatDate, formatDateShort, isAppointmentLate, todayISO } from '@/lib/utils'
 import { daySlots } from '@/lib/availability'
 import type { Appointment, AppointmentStatus } from '@/types'
 
@@ -37,6 +37,13 @@ export default function ClientAppointments() {
     else alert('Este agendamento não existe mais.')
     setSearchParams({}, { replace: true })
   }, [aptParam, appointments, loading, setSearchParams])
+
+  // Forca um re-render periodico para que a marcacao "Atrasado" apareca sem precisar recarregar a pagina
+  const [, setTick] = useState(0)
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 30_000)
+    return () => clearInterval(id)
+  }, [])
 
   const mine = useMemo(
     () =>
@@ -99,8 +106,11 @@ export default function ClientAppointments() {
                       <User size={15} className="shrink-0" /> <span className="truncate">{a.professional}</span>
                     </p>
                   </div>
-                  <span className="shrink-0">
+                  <span className="flex shrink-0 flex-col items-end gap-1">
                     <StatusBadge status={a.status} />
+                    {isAppointmentLate(a.date, a.time, a.status) && (
+                      <span className="text-[10px] font-semibold uppercase tracking-wide text-red-500">Atrasado</span>
+                    )}
                   </span>
                 </div>
                 <div className="flex flex-col gap-3 border-t border-cream-200 pt-3 sm:flex-row sm:items-center sm:justify-between">

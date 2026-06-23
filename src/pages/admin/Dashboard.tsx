@@ -32,7 +32,7 @@ import {
 import { useStore } from '@/store/store'
 import { StatCard } from '@/components/ui/StatCard'
 import { StatusBadge } from '@/components/ui/Badge'
-import { cn, formatCurrency, nowBR, todayISO } from '@/lib/utils'
+import { cn, formatCurrency, isAppointmentLate, nowBR, todayISO } from '@/lib/utils'
 import { format, subDays, startOfWeek, endOfWeek, parseISO, isWithinInterval } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
@@ -117,10 +117,9 @@ export default function AdminDashboard() {
     const id = setInterval(() => setNow(nowBR()), 30_000)
     return () => clearInterval(id)
   }, [])
-  const nowTime = format(now, 'HH:mm')
   const upcomingToday = stats.todays
     .filter((a) => ['scheduled', 'confirmed', 'in_progress'].includes(a.status))
-    .map((a) => ({ ...a, isLate: a.status !== 'in_progress' && a.time < nowTime }))
+    .map((a) => ({ ...a, isLate: isAppointmentLate(a.date, a.time, a.status) }))
     .sort((a, b) => a.time.localeCompare(b.time))
 
   return (

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { Input, Select, Textarea } from '@/components/ui/Input'
 import { AppointmentDetailsModal } from '@/components/AppointmentDetailsModal'
-import { cn, formatCurrency, formatDateShort, todayISO, STATUS_META } from '@/lib/utils'
+import { cn, formatCurrency, formatDateShort, isAppointmentLate, todayISO, STATUS_META } from '@/lib/utils'
 import { daySlots } from '@/lib/availability'
 import type { Appointment, AppointmentStatus } from '@/types'
 
@@ -28,6 +28,13 @@ export default function AdminAppointments() {
   const [editing, setEditing] = useState<Appointment | 'new' | null>(null)
   const [details, setDetails] = useState<Appointment | null>(null)
   const [searchParams, setSearchParams] = useSearchParams()
+
+  // Forca um re-render periodico para que a marcacao "Atrasado" apareca sem precisar recarregar a pagina
+  const [, setTick] = useState(0)
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 30_000)
+    return () => clearInterval(id)
+  }, [])
 
   // Abre o popup de detalhes ao chegar via notificação (/admin/agendamentos?apt=ID)
   // Só limpa o parâmetro depois que os agendamentos terminarem de carregar, senão o popup
@@ -129,7 +136,12 @@ export default function AdminAppointments() {
                     <p className="font-medium text-stone-700">{a.clientName}</p>
                     <p className="text-xs text-stone-400">{formatDateShort(a.date)} · {a.time}</p>
                   </div>
-                  <StatusBadge status={a.status} />
+                  <div className="flex flex-col items-end gap-1">
+                    <StatusBadge status={a.status} />
+                    {isAppointmentLate(a.date, a.time, a.status) && (
+                      <span className="text-[10px] font-semibold uppercase tracking-wide text-red-500">Atrasado</span>
+                    )}
+                  </div>
                 </div>
                 <p className="text-sm text-stone-500">{svcNames(a.serviceIds)}</p>
                 <div className="flex items-center justify-between border-t border-cream-100 pt-3">
@@ -204,7 +216,12 @@ export default function AdminAppointments() {
                 <td className="px-5 py-3 font-medium text-stone-700">{a.clientName}</td>
                 <td className="px-5 py-3 text-stone-500">{svcNames(a.serviceIds)}</td>
                 <td className="px-5 py-3 font-medium text-gold-700">{formatCurrency(a.total)}</td>
-                <td className="px-5 py-3"><StatusBadge status={a.status} /></td>
+                <td className="px-5 py-3">
+                  <StatusBadge status={a.status} />
+                  {isAppointmentLate(a.date, a.time, a.status) && (
+                    <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-red-500">Atrasado</p>
+                  )}
+                </td>
                 <td className="px-5 py-3">
                   <div className="flex items-center justify-end gap-1">
                     <IconBtn title="Ver detalhes" onClick={() => setDetails(a)} className="text-stone-500"><Eye size={16} /></IconBtn>

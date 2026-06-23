@@ -13,7 +13,7 @@ import { Avatar } from '@/components/Logo'
 import { StatusBadge } from '@/components/ui/Badge'
 import { useStore } from '@/store/store'
 import { whatsappLink, DEFAULT_WHATS_MESSAGE } from '@/lib/whatsapp'
-import { formatCurrency, formatDate, formatDateShort } from '@/lib/utils'
+import { formatCurrency, formatDate, formatDateShort, isAppointmentLate } from '@/lib/utils'
 import type { Appointment } from '@/types'
 
 /** Popup com todas as informações de um agendamento + dados do cliente. */
@@ -44,7 +44,12 @@ export function AppointmentDetailsModal({
               {client && <p className="text-xs text-stone-400">{client.points} pontos de fidelidade</p>}
             </div>
           </div>
-          <StatusBadge status={appointment.status} />
+          <div className="flex flex-col items-end gap-1">
+            <StatusBadge status={appointment.status} />
+            {isAppointmentLate(appointment.date, appointment.time, appointment.status) && (
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-red-500">Atrasado</span>
+            )}
+          </div>
         </div>
 
         {/* Contato do cliente */}
