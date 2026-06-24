@@ -9,6 +9,7 @@ import {
   AlertTriangle,
   ArrowRight,
   FileText,
+  User,
 } from 'lucide-react'
 import { useStore } from '@/store/store'
 import { Button } from '@/components/ui/Button'
@@ -20,22 +21,25 @@ import { ptBR } from 'date-fns/locale'
 
 const STEPS = [
   { n: 1, label: 'Serviços' },
-  { n: 2, label: 'Data' },
-  { n: 3, label: 'Horário' },
-  { n: 4, label: 'Confirmar' },
+  { n: 2, label: 'Profissional' },
+  { n: 3, label: 'Data' },
+  { n: 4, label: 'Horário' },
+  { n: 5, label: 'Confirmar' },
 ]
 
 export default function Booking() {
-  const { currentUser, services, appointments, settings, createAppointment } = useStore()
+  const { currentUser, services, professionals, appointments, settings, createAppointment } = useStore()
   const navigate = useNavigate()
 
   const [date, setDate] = useState(todayISO())
   const [time, setTime] = useState('')
   const [selected, setSelected] = useState<string[]>([])
+  const [professionalId, setProfessionalId] = useState<string | null>(null)
   const [notes, setNotes] = useState('')
   const [done, setDone] = useState(false)
 
   const activeServices = services.filter((s) => s.active)
+  const activePros = professionals.filter((p) => p.active)
   const total = selected.reduce((s, id) => s + (services.find((x) => x.id === id)?.price ?? 0), 0)
   const duration = selected.reduce((s, id) => s + (services.find((x) => x.id === id)?.duration ?? 0), 0)
 
@@ -55,8 +59,9 @@ export default function Booking() {
 
   // Progresso para o stepper
   const step1Done = selected.length > 0
-  const step3Done = !!time
-  const activeStep = !step1Done ? 1 : !step3Done ? 3 : 4
+  const step2Done = professionalId !== null
+  const step4Done = !!time
+  const activeStep = !step1Done ? 1 : !step2Done ? 2 : !step4Done ? 4 : 5
 
   function toggleService(id: string) {
     setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))
@@ -64,7 +69,8 @@ export default function Booking() {
   }
 
   function confirm() {
-    if (!currentUser || !time || selected.length === 0) return
+    if (!currentUser || !time || selected.length === 0 || professionalId === null) return
+    const selectedPro = professionals.find((p) => p.id === professionalId)
     createAppointment({
       clientId: currentUser.id,
       serviceIds: selected,
@@ -72,7 +78,7 @@ export default function Booking() {
       time,
       status: 'scheduled',
       notes,
-      professional: 'A definir',
+      professional: selectedPro?.name ?? 'A definir',
     })
     setDone(true)
   }
@@ -119,6 +125,7 @@ export default function Booking() {
             onClick={() => {
               setDone(false)
               setSelected([])
+              setProfessionalId(null)
               setTime('')
               setNotes('')
             }}
@@ -157,8 +164,9 @@ export default function Booking() {
         {STEPS.map((step, i) => {
           const isStepDone =
             step.n === 1 ? step1Done :
-            step.n === 2 ? step1Done :
-            step.n === 3 ? step3Done :
+            step.n === 2 ? step2Done :
+            step.n === 3 ? step2Done :
+            step.n === 4 ? step4Done :
             false
           const isActive = step.n === activeStep
 
@@ -251,8 +259,82 @@ export default function Booking() {
             )}
           </StepCard>
 
-          {/* Passo 2 — Data */}
-          <StepCard step={2} title="Data" icon={<CalendarDays size={16} />}>
+          {/* Passo 2 — Profissional */}
+          <StepCard step={2} title="Profissional" icon={<User size={16} />}>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {/* Opção: qualquer profissional */}
+              <button
+                onClick={() => setProfessionalId('')}
+                className={cn(
+                  'group flex items-center gap-3.5 rounded-2xl border p-4 text-left transition-all duration-200',
+                  professionalId === ''
+                    ? 'border-gold-400 bg-gradient-to-br from-gold-300/10 to-cream-100 shadow-md shadow-gold-200/40'
+                    : 'border-cream-200 bg-white hover:border-gold-300/70 hover:shadow-sm',
+                )}
+              >
+                <div className={cn(
+                  'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-2xl transition-all',
+                  professionalId === '' ? 'bg-gold-400/15 scale-105' : 'bg-cream-100 group-hover:bg-cream-200',
+                )}>
+                  🤝
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-serif text-base font-semibold leading-snug text-stone-800">Qualquer profissional</p>
+                  <p className="mt-0.5 text-xs text-stone-400">Primeiro disponível</p>
+                </div>
+                <div className={cn(
+                  'flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200',
+                  professionalId === ''
+                    ? 'scale-110 border-gold-500 bg-gold-500 text-white'
+                    : 'border-cream-300 group-hover:border-gold-300',
+                )}>
+                  {professionalId === '' && <Check size={13} />}
+                </div>
+              </button>
+
+              {/* Profissionais ativos */}
+              {activePros.map((pro) => {
+                const isSel = professionalId === pro.id
+                return (
+                  <button
+                    key={pro.id}
+                    onClick={() => setProfessionalId(pro.id)}
+                    className={cn(
+                      'group flex items-center gap-3.5 rounded-2xl border p-4 text-left transition-all duration-200',
+                      isSel
+                        ? 'border-gold-400 bg-gradient-to-br from-gold-300/10 to-cream-100 shadow-md shadow-gold-200/40'
+                        : 'border-cream-200 bg-white hover:border-gold-300/70 hover:shadow-sm',
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-lg font-bold text-white transition-all',
+                        isSel ? 'scale-105' : '',
+                      )}
+                      style={{ backgroundColor: pro.color ?? '#C9A35E' }}
+                    >
+                      {pro.name.charAt(0)}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-serif text-base font-semibold leading-snug text-stone-800">{pro.name}</p>
+                      <p className="mt-0.5 text-xs text-stone-400">{pro.role}</p>
+                    </div>
+                    <div className={cn(
+                      'flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200',
+                      isSel
+                        ? 'scale-110 border-gold-500 bg-gold-500 text-white'
+                        : 'border-cream-300 group-hover:border-gold-300',
+                    )}>
+                      {isSel && <Check size={13} />}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </StepCard>
+
+          {/* Passo 3 — Data */}
+          <StepCard step={3} title="Data" icon={<CalendarDays size={16} />}>
             <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {quickDays.map((d) => {
                 const dt = parseISO(d)
@@ -315,8 +397,8 @@ export default function Booking() {
             />
           </StepCard>
 
-          {/* Passo 3 — Horário */}
-          <StepCard step={3} title="Horário" icon={<Clock size={16} />}>
+          {/* Passo 4 — Horário */}
+          <StepCard step={4} title="Horário" icon={<Clock size={16} />}>
             {!working ? (
               <div className="flex items-center gap-4 rounded-2xl border border-blush-200 bg-blush-50 p-4">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blush-100">
@@ -364,8 +446,8 @@ export default function Booking() {
             )}
           </StepCard>
 
-          {/* Passo 4 — Observações */}
-          <StepCard step={4} title="Observações" icon={<FileText size={16} />} optional>
+          {/* Passo 5 — Observações */}
+          <StepCard step={5} title="Observações" icon={<FileText size={16} />} optional>
             <Textarea
               rows={3}
               placeholder="Alguma preferência, alergia ou informação importante para o profissional?"
@@ -403,6 +485,11 @@ export default function Booking() {
                 <>
                   <div className="my-4 h-px bg-gradient-to-r from-transparent via-cream-300 to-transparent" />
                   <div className="space-y-2.5">
+                    <SummaryRow label="Profissional">
+                      <span className={professionalId !== null ? 'text-stone-700' : 'text-stone-300'}>
+                        {professionalId === null ? '—' : professionalId === '' ? 'Qualquer' : professionals.find(p => p.id === professionalId)?.name ?? '—'}
+                      </span>
+                    </SummaryRow>
                     <SummaryRow label="Duração">{duration} min</SummaryRow>
                     <SummaryRow label="Data">
                       {format(parseISO(date), "dd 'de' MMM", { locale: ptBR })}
@@ -422,15 +509,15 @@ export default function Booking() {
               <Button
                 className="mt-5 w-full"
                 size="lg"
-                disabled={selected.length === 0 || !time}
+                disabled={selected.length === 0 || professionalId === null || !time}
                 onClick={confirm}
               >
                 Confirmar agendamento <ArrowRight size={17} />
               </Button>
 
-              {(selected.length === 0 || !time) && (
+              {(selected.length === 0 || professionalId === null || !time) && (
                 <p className="mt-3 text-center text-xs text-stone-400">
-                  {selected.length === 0 ? 'Escolha seus serviços acima' : 'Selecione um horário para continuar'}
+                  {selected.length === 0 ? 'Escolha seus serviços acima' : professionalId === null ? 'Escolha um profissional' : 'Selecione um horário para continuar'}
                 </p>
               )}
             </div>
@@ -472,6 +559,11 @@ export default function Booking() {
                 <>
                   <div className="my-4 h-px bg-gradient-to-r from-transparent via-cream-300 to-transparent" />
                   <div className="space-y-2.5">
+                    <SummaryRow label="Profissional">
+                      <span className={professionalId !== null ? 'text-stone-700' : 'text-stone-300'}>
+                        {professionalId === null ? '—' : professionalId === '' ? 'Qualquer' : professionals.find(p => p.id === professionalId)?.name ?? '—'}
+                      </span>
+                    </SummaryRow>
                     <SummaryRow label="Duração">
                       {duration} min
                     </SummaryRow>
@@ -496,7 +588,7 @@ export default function Booking() {
               <Button
                 className="mt-5 w-full"
                 size="lg"
-                disabled={selected.length === 0 || !time}
+                disabled={selected.length === 0 || professionalId === null || !time}
                 onClick={confirm}
               >
                 Confirmar agendamento
@@ -505,11 +597,13 @@ export default function Booking() {
 
               <p className={cn(
                 'mt-3 text-center text-xs transition-all',
-                selected.length === 0 || !time ? 'text-stone-400' : 'text-transparent',
+                selected.length === 0 || professionalId === null || !time ? 'text-stone-400' : 'text-transparent',
               )}>
                 {selected.length === 0
                   ? 'Escolha seus serviços acima'
-                  : 'Selecione um horário para continuar'}
+                  : professionalId === null
+                    ? 'Escolha um profissional'
+                    : 'Selecione um horário para continuar'}
               </p>
             </div>
           </div>
