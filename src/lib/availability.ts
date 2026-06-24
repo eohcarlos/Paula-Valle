@@ -2,7 +2,12 @@ import type { Appointment, SalonSettings, TimeRange } from '@/types'
 import { generateTimeSlots } from '@/lib/utils'
 import { getDay, parseISO } from 'date-fns'
 
-/** Retorna os horários ocupados (HH:mm) para uma data, ignorando cancelados. */
+function toMinutes(time: string): number {
+  const [h, m] = time.split(':').map(Number)
+  return h * 60 + m
+}
+
+/** Retorna os horários de início dos agendamentos ativos em uma data. */
 export function occupiedSlots(appointments: Appointment[], date: string, ignoreId?: string): Set<string> {
   return new Set(
     appointments
@@ -56,14 +61,13 @@ export interface SlotInfo {
   available: boolean
 }
 
-function toMinutes(time: string): number {
-  const [h, m] = time.split(':').map(Number)
-  return h * 60 + m
-}
-
 /**
- * @param duration duração do serviço em minutos — usada para garantir que o atendimento
- * termine antes do fim do bloco (não pode atravessar pausas como o intervalo de almoço).
+ * Retorna os slots do dia com disponibilidade calculada considerando a duração de
+ * cada agendamento existente. Um slot só está disponível se:
+ *   1. O novo atendimento [t, t+duration) não sobrepõe nenhum agendamento existente [A.time, A.time+A.duration)
+ *   2. O novo atendimento termina antes do fim do bloco de horário
+ *
+ * @param duration duração total dos serviços selecionados em minutos
  */
 export function daySlots(
   date: string,
@@ -74,14 +78,35 @@ export function daySlots(
 ): SlotInfo[] {
   const ranges = dayRanges(date, settings)
   if (ranges.length === 0) return []
-  const occupied = occupiedSlots(appointments, date, ignoreId)
+
+  // Agendamentos ativos no dia (exceto cancelados e o ignorado para edição)
+  const existing = appointments.filter(
+    (a) => a.date === date && a.status !== 'canceled' && a.id !== ignoreId,
+  )
+
+  // Duração mínima de 1 para garantir que o próprio início seja bloqueado quando duration=0
+  const newDuration = Math.max(duration, 1)
+
   const times = ranges.flatMap((r) =>
     generateTimeSlots(r.open, r.close, settings.slotInterval).filter(
-      (t) => toMinutes(t) + duration <= toMinutes(r.close),
+      // O novo atendimento deve terminar antes do fim do bloco
+      (t) => toMinutes(t) + newDuration <= toMinutes(r.close),
     ),
   )
-  return times.map((time) => ({
-    time,
-    available: !occupied.has(time),
-  }))
+
+  return times.map((t) => {
+    const tStart = toMinutes(t)
+    const tEnd = tStart + newDuration
+
+    // Verifica sobreposição com cada agendamento existente
+    const overlaps = existing.some((a) => {
+      const aStart = toMinutes(a.time)
+      // Usa ao menos 1 min para garantir que slots no mesmo horário sejam bloqueados
+      const aEnd = aStart + Math.max(a.duration ?? 0, 1)
+      // Sobreposição: [tStart, tEnd) ∩ [aStart, aEnd) ≠ ∅
+      return tStart < aEnd && tEnd > aStart
+    })
+
+    return { time: t, available: !overlaps }
+  })
 }
