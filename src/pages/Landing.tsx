@@ -6,7 +6,6 @@ import {
   Phone, Clock, ChevronRight, Scissors, Award, Shield,
 } from 'lucide-react'
 import { Logo } from '@/components/Logo'
-import { ThemeToggle } from '@/components/ThemeToggle'
 import { useStore } from '@/store/store'
 import { whatsappLink, DEFAULT_WHATS_MESSAGE } from '@/lib/whatsapp'
 
@@ -73,17 +72,6 @@ export default function Landing() {
 
           {/* Ações direita */}
           <div className="flex items-center gap-2">
-            <ThemeToggle />
-
-            <a
-              href={wppHero}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden items-center gap-1.5 rounded-xl border border-beige-300 px-4 py-2 text-sm font-medium text-stone-600 transition hover:border-gold-400 hover:text-gold-700 sm:flex"
-            >
-              <MessageCircle size={15} /> WhatsApp
-            </a>
-
             <Link
               to={homeLink}
               className="hidden items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium text-stone-600 transition hover:text-stone-900 sm:flex"
