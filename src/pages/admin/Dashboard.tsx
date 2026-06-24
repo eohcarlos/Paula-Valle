@@ -33,6 +33,7 @@ import {
 } from 'lucide-react'
 import { useStore } from '@/store/store'
 import { StatCard } from '@/components/ui/StatCard'
+import { CountUp } from '@/components/ui/CountUp'
 import { StatusBadge } from '@/components/ui/Badge'
 import { cn, formatCurrency, isAppointmentLate, nowBR, todayISO } from '@/lib/utils'
 import { format, subDays, startOfWeek, endOfWeek, parseISO, isWithinInterval } from 'date-fns'
@@ -145,12 +146,16 @@ export default function AdminDashboard() {
           <div className="flex gap-4 sm:gap-6">
             <div className="flex flex-col items-center gap-0.5 rounded-2xl border border-white/10 bg-white/5 px-5 py-3">
               <span className="text-xs font-semibold uppercase tracking-widest text-stone-400">Hoje</span>
-              <span className="font-serif text-2xl font-semibold text-white">{stats.todays.length}</span>
+              <span className="font-serif text-2xl font-semibold text-white">
+                <CountUp to={stats.todays.length} duration={900} />
+              </span>
               <span className="text-xs text-stone-400">agendamentos</span>
             </div>
             <div className="flex flex-col items-center gap-0.5 rounded-2xl border border-white/10 bg-white/5 px-5 py-3">
               <span className="text-xs font-semibold uppercase tracking-widest text-stone-400">Receita</span>
-              <span className="font-serif text-2xl font-semibold text-gold-300">{formatCurrency(stats.todayRevenue)}</span>
+              <span className="font-serif text-2xl font-semibold text-gold-300">
+                <CountUp to={stats.todayRevenue} duration={1100} formatter={formatCurrency} />
+              </span>
               <span className="text-xs text-stone-400">hoje</span>
             </div>
           </div>
@@ -202,9 +207,9 @@ export default function AdminDashboard() {
           </div>
           <div className="p-5">
             <div className="grid gap-4 sm:grid-cols-3">
-              <StatCard label="Hoje" value={formatCurrency(stats.todayRevenue)} icon={<Wallet />} accent="gold" hint="atendimentos de hoje" />
-              <StatCard label="Este mês" value={formatCurrency(stats.monthRevenue)} icon={<TrendingUp />} accent="sky" hint="mês atual" />
-              <StatCard label="Total acumulado" value={formatCurrency(stats.totalRevenue)} icon={<Wallet />} accent="emerald" hint={`${stats.completed.length} atendimentos finalizados`} />
+              <StatCard label="Hoje" value={stats.todayRevenue} formatter={formatCurrency} icon={<Wallet />} accent="gold" hint="atendimentos de hoje" />
+              <StatCard label="Este mês" value={stats.monthRevenue} formatter={formatCurrency} icon={<TrendingUp />} accent="sky" hint="mês atual" />
+              <StatCard label="Total acumulado" value={stats.totalRevenue} formatter={formatCurrency} icon={<Wallet />} accent="emerald" hint={`${stats.completed.length} atendimentos finalizados`} />
             </div>
           </div>
         </div>
@@ -219,9 +224,9 @@ export default function AdminDashboard() {
           </div>
           <div className="p-5">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <StatCard label="Ticket médio" value={formatCurrency(stats.avgTicket)} icon={<Receipt />} accent="gold" hint="por atendimento" />
-              <StatCard label="Avaliação média" value={stats.avgRating ? `${stats.avgRating.toFixed(1)} ★` : '—'} icon={<Star />} accent="amber" hint="satisfação dos clientes" />
-              <StatCard label="Taxa de cancelamento" value={`${stats.cancelRate.toFixed(0)}%`} icon={<Percent />} accent="rose" hint="do total de agendamentos" />
+              <StatCard label="Ticket médio" value={stats.avgTicket} formatter={formatCurrency} icon={<Receipt />} accent="gold" hint="por atendimento" />
+              <StatCard label="Avaliação média" value={stats.avgRating} formatter={(n) => n ? `${n.toFixed(1)} ★` : '—'} icon={<Star />} accent="amber" hint="satisfação dos clientes" />
+              <StatCard label="Taxa de cancelamento" value={stats.cancelRate} formatter={(n) => `${n.toFixed(0)}%`} icon={<Percent />} accent="rose" hint="do total de agendamentos" />
               <StatCard label="Pendentes" value={stats.pending} icon={<CalendarClock />} accent="violet" hint="a realizar" />
             </div>
           </div>

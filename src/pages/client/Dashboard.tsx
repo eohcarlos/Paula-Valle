@@ -6,6 +6,7 @@ import {
 import { useStore } from '@/store/store'
 import { StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
+import { CountUp } from '@/components/ui/CountUp'
 import { formatCurrency, formatDateShort, todayISO } from '@/lib/utils'
 
 export default function ClientDashboard() {
@@ -63,10 +64,10 @@ export default function ClientDashboard() {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
-          { label: 'Atendimentos', value: completed.length, icon: <CheckCircle2 size={20} />, accent: 'emerald', sub: 'finalizados' },
-          { label: 'Total investido', value: formatCurrency(totalSpent), icon: <Wallet size={20} />, accent: 'gold', sub: 'em serviços' },
-          { label: 'Pontos fidelidade', value: currentUser.points, icon: <Heart size={20} />, accent: 'blush', sub: '10 pts por visita' },
-          { label: 'Próximos', value: upcoming.length, icon: <CalendarClock size={20} />, accent: 'sky', sub: 'agendamentos' },
+          { label: 'Atendimentos',    raw: completed.length,       formatter: undefined,     icon: <CheckCircle2 size={20} />, accent: 'emerald', sub: 'finalizados' },
+          { label: 'Total investido', raw: totalSpent,             formatter: formatCurrency, icon: <Wallet size={20} />,       accent: 'gold',    sub: 'em serviços' },
+          { label: 'Pontos fidelidade', raw: currentUser.points,   formatter: undefined,     icon: <Heart size={20} />,        accent: 'blush',   sub: '10 pts por visita' },
+          { label: 'Próximos',        raw: upcoming.length,        formatter: undefined,     icon: <CalendarClock size={20} />, accent: 'sky',    sub: 'agendamentos' },
         ].map((s) => (
           <div key={s.label} className="overflow-hidden rounded-3xl border border-cream-200 bg-white p-4 shadow-card">
             <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-2xl ${
@@ -75,7 +76,12 @@ export default function ClientDashboard() {
               s.accent === 'blush'   ? 'bg-blush-100 text-blush-500' :
                                        'bg-sky-100 text-sky-600'
             }`}>{s.icon}</div>
-            <p className="font-serif text-2xl font-semibold text-stone-800">{s.value}</p>
+            <p className="font-serif text-2xl font-semibold text-stone-800">
+              <CountUp
+                to={s.raw}
+                formatter={s.formatter ?? ((n) => Math.round(n).toLocaleString('pt-BR'))}
+              />
+            </p>
             <p className="text-xs font-semibold text-stone-500">{s.label}</p>
             <p className="text-[10px] text-stone-400">{s.sub}</p>
           </div>
