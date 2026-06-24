@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { NavLink, Link, useNavigate, Outlet } from 'react-router-dom'
 import {
-  Bell, LogOut, Menu, X, Check, Camera, ChevronLeft, ChevronRight,
+  Bell, LogOut, Menu, X, Check, Camera, Trash2, ChevronLeft, ChevronRight,
   CalendarPlus, Gift, Heart, History as HistoryIcon, CalendarCheck,
 } from 'lucide-react'
 import { Logo, Avatar } from '@/components/Logo'
@@ -47,6 +47,11 @@ export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }
     const reader = new FileReader()
     reader.onload = () => updateUser(currentUser.id, { photo: reader.result as string })
     reader.readAsDataURL(file)
+  }
+
+  function removePhoto() {
+    if (!currentUser) return
+    updateUser(currentUser.id, { photo: '' })
   }
 
   const myNotifs = notifications.filter(
@@ -111,9 +116,19 @@ export function DashboardShell({ items, role }: { items: NavItem[]; role: Role }
           </button>
           <input ref={photoRef} type="file" accept="image/*" hidden onChange={handlePhoto} />
           {!isCollapsed && (
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-stone-700">{currentUser?.name}</p>
               <p className="truncate text-xs text-stone-400">{currentUser?.email}</p>
+              {currentUser?.photo && (
+                <button
+                  type="button"
+                  onClick={removePhoto}
+                  className="mt-0.5 flex items-center gap-1 text-[10px] font-medium text-stone-400 transition hover:text-red-500"
+                  title="Remover foto"
+                >
+                  <Trash2 size={10} /> Remover foto
+                </button>
+              )}
             </div>
           )}
         </div>

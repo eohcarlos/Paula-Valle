@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Camera, Save, CheckCircle2, User, Star, Shield, KeyRound, LogOut } from 'lucide-react'
+import { Camera, Trash2, Save, CheckCircle2, User, Star, Shield, KeyRound, LogOut } from 'lucide-react'
 import { useStore } from '@/store/store'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
@@ -33,10 +33,14 @@ export default function Profile() {
     reader.onload = () => {
       const photo = reader.result as string
       setForm((f) => ({ ...f, photo }))
-      // Atualiza o store imediatamente → header avatar muda na hora
       updateUser(currentUser!.id, { photo })
     }
     reader.readAsDataURL(file)
+  }
+
+  function removePhoto() {
+    setForm((f) => ({ ...f, photo: '' }))
+    updateUser(currentUser!.id, { photo: '' })
   }
 
   function saveProfile(e: React.FormEvent) {
@@ -71,19 +75,30 @@ export default function Profile() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_15%,rgba(201,163,94,0.28),transparent_55%)]" />
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(228,152,162,0.18),transparent_50%)]" />
         <div className="relative flex flex-wrap items-center gap-6">
-          {/* Avatar com botão de câmera */}
-          <div className="relative shrink-0">
-            <div className="ring-4 ring-white/20 ring-offset-2 ring-offset-stone-800 rounded-full">
-              <Avatar name={form.name} src={form.photo} size={88} />
+          {/* Avatar com botões de câmera e remoção */}
+          <div className="flex flex-col items-center gap-2 shrink-0">
+            <div className="relative">
+              <div className="ring-4 ring-white/20 ring-offset-2 ring-offset-stone-800 rounded-full">
+                <Avatar name={form.name} src={form.photo} size={88} />
+              </div>
+              <button
+                onClick={() => fileRef.current?.click()}
+                className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-full bg-gold-500 text-white shadow-gold transition hover:scale-110 hover:bg-gold-400"
+                title="Alterar foto"
+              >
+                <Camera size={15} />
+              </button>
+              <input ref={fileRef} type="file" accept="image/*" hidden onChange={handlePhoto} />
             </div>
-            <button
-              onClick={() => fileRef.current?.click()}
-              className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-full bg-gold-500 text-white shadow-gold transition hover:scale-110 hover:bg-gold-400"
-              title="Alterar foto"
-            >
-              <Camera size={15} />
-            </button>
-            <input ref={fileRef} type="file" accept="image/*" hidden onChange={handlePhoto} />
+            {form.photo && (
+              <button
+                onClick={removePhoto}
+                className="flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-medium text-white/60 transition hover:bg-red-500/30 hover:text-red-300"
+                title="Remover foto"
+              >
+                <Trash2 size={11} /> Remover foto
+              </button>
+            )}
           </div>
           {/* Info */}
           <div className="min-w-0">
