@@ -30,7 +30,12 @@ export default function Profile() {
     const file = e.target.files?.[0]
     if (!file) return
     const reader = new FileReader()
-    reader.onload = () => setForm((f) => ({ ...f, photo: reader.result as string }))
+    reader.onload = () => {
+      const photo = reader.result as string
+      setForm((f) => ({ ...f, photo }))
+      // Atualiza o store imediatamente → header avatar muda na hora
+      updateUser(currentUser!.id, { photo })
+    }
     reader.readAsDataURL(file)
   }
 

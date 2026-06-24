@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { ChevronLeft } from 'lucide-react'
 import { Logo } from '@/components/Logo'
 
 export function AuthShell({
@@ -49,10 +50,16 @@ export function AuthShell({
 
         {/* Formulário */}
         <div className="p-8 sm:p-12">
-          <div className="mb-8 lg:hidden">
-            <Link to="/">
-              <Logo />
-            </Link>
+          {/* Botão voltar */}
+          <Link
+            to="/"
+            className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-stone-400 transition hover:text-stone-700"
+          >
+            <ChevronLeft size={16} /> Voltar
+          </Link>
+
+          <div className="mb-6 lg:hidden">
+            <Logo />
           </div>
           <h1 className="text-3xl font-semibold text-stone-800">{title}</h1>
           <p className="mt-2 text-stone-500">{subtitle}</p>

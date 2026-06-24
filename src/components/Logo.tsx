@@ -42,7 +42,7 @@ export function Avatar({
         src={src}
         alt={name}
         style={{ width: size, height: size }}
-        className="rounded-full object-cover ring-2 ring-gold-300/40"
+        className="rounded-full object-cover"
       />
     )
   }
