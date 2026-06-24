@@ -74,7 +74,7 @@ export default function Landing() {
           <div className="flex items-center gap-2">
             <Link
               to={homeLink}
-              className="hidden items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium text-stone-600 transition hover:text-stone-900 sm:flex"
+              className="flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium text-stone-600 transition hover:text-stone-900"
             >
               {currentUser ? 'Meu Painel' : 'Entrar'}
             </Link>
