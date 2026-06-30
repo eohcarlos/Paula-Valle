@@ -1,3 +1,8 @@
 .env
 node_modules
 dist
+
+# Arquivos de origem duplicados (já em public/)
+/Auth.jpg
+/Hero.jpg
+/Logo.jpg
