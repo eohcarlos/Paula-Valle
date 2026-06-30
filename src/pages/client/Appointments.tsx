@@ -18,6 +18,7 @@ import { useStore } from '@/store/store'
 import { StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
+import { ServiceIcon } from '@/lib/serviceIcons'
 import {
   cn,
   formatCurrency,
@@ -330,7 +331,9 @@ function DetailModal({
           <div className="space-y-2">
             {svcList.map((s) => (
               <div key={s.id} className="flex items-center justify-between text-sm">
-                <span className="text-stone-600">{s.icon} {s.name}</span>
+                <span className="flex items-center gap-1.5 text-stone-600">
+                  <ServiceIcon icon={s.icon} size={14} className="text-gold-500" /> {s.name}
+                </span>
                 <span className="font-semibold text-stone-700">{formatCurrency(s.price)}</span>
               </div>
             ))}

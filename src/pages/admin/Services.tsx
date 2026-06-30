@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { Input, Textarea } from '@/components/ui/Input'
 import { cn, formatCurrency, uid } from '@/lib/utils'
+import { SERVICE_ICONS, SERVICE_ICON_KEYS, ServiceIcon } from '@/lib/serviceIcons'
 import type { Service } from '@/types'
 
 export default function Services() {
@@ -37,8 +38,8 @@ export default function Services() {
             <div className={cn('h-1 w-full', s.active ? 'bg-gold-400' : 'bg-stone-200')} />
             <div className="p-5">
               <div className="flex items-start justify-between">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cream-100 text-3xl">
-                  {s.icon}
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cream-100 text-gold-600">
+                  <ServiceIcon icon={s.icon} size={26} />
                 </div>
                 <span className={cn('rounded-full px-3 py-1 text-xs font-medium', s.active ? 'bg-emerald-100 text-emerald-600' : 'bg-stone-100 text-stone-400')}>
                   {s.active ? 'Ativo' : 'Inativo'}
@@ -82,11 +83,9 @@ export default function Services() {
   )
 }
 
-const ICONS = ['✂️', '💈', '💨', '🎨', '✨', '🌿', '💧', '💅', '🦶', '💆', '👑', '🌸']
-
 function ServiceForm({ service, onClose, onSave }: { service: Service | null; onClose: () => void; onSave: (s: Service) => void }) {
   const [form, setForm] = useState<Service>(
-    service ?? { id: uid('srv'), name: '', description: '', duration: 30, price: 0, active: true, icon: '✂️' },
+    service ?? { id: uid('srv'), name: '', description: '', duration: 30, price: 0, active: true, icon: 'scissors' },
   )
 
   return (
@@ -95,15 +94,18 @@ function ServiceForm({ service, onClose, onSave }: { service: Service | null; on
         <div>
           <label className="label">Ícone</label>
           <div className="flex flex-wrap gap-2">
-            {ICONS.map((ic) => (
-              <button
-                key={ic}
-                onClick={() => setForm((f) => ({ ...f, icon: ic }))}
-                className={cn('flex h-11 w-11 items-center justify-center rounded-xl border text-xl transition', form.icon === ic ? 'border-gold-400 bg-gold-300/10' : 'border-cream-200')}
-              >
-                {ic}
-              </button>
-            ))}
+            {SERVICE_ICON_KEYS.map((key) => {
+              const Icon = SERVICE_ICONS[key]
+              return (
+                <button
+                  key={key}
+                  onClick={() => setForm((f) => ({ ...f, icon: key }))}
+                  className={cn('flex h-11 w-11 items-center justify-center rounded-xl border transition', form.icon === key ? 'border-gold-400 bg-gold-300/10 text-gold-700' : 'border-cream-200 text-stone-500')}
+                >
+                  <Icon size={19} />
+                </button>
+              )
+            })}
           </div>
         </div>
         <Input label="Nome" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />

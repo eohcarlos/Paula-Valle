@@ -13,6 +13,7 @@ import { Avatar } from '@/components/Logo'
 import { StatusBadge } from '@/components/ui/Badge'
 import { useStore } from '@/store/store'
 import { whatsappLink, DEFAULT_WHATS_MESSAGE } from '@/lib/whatsapp'
+import { ServiceIcon } from '@/lib/serviceIcons'
 import { formatCurrency, formatDate, formatDateShort, isAppointmentLate } from '@/lib/utils'
 import type { Appointment } from '@/types'
 
@@ -95,7 +96,9 @@ export function AppointmentDetailsModal({
         <div className="rounded-2xl border border-cream-200 p-4">
           {svcList.map((s) => (
             <div key={s.id} className="flex justify-between py-1 text-sm">
-              <span className="text-stone-600">{s.icon} {s.name}</span>
+              <span className="flex items-center gap-1.5 text-stone-600">
+                <ServiceIcon icon={s.icon} size={14} className="text-gold-500" /> {s.name}
+              </span>
               <span className="font-medium text-stone-700">{formatCurrency(s.price)}</span>
             </div>
           ))}

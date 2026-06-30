@@ -9,6 +9,7 @@ import { Input, Select, Textarea } from '@/components/ui/Input'
 import { AppointmentDetailsModal } from '@/components/AppointmentDetailsModal'
 import { cn, formatCurrency, formatDateShort, isAppointmentLate, nowTimeBR, todayISO, STATUS_META } from '@/lib/utils'
 import { daySlots } from '@/lib/availability'
+import { ServiceIcon } from '@/lib/serviceIcons'
 import type { Appointment, AppointmentStatus } from '@/types'
 
 const FILTERS: { key: AppointmentStatus | 'all'; label: string }[] = [
@@ -349,7 +350,9 @@ function AppointmentForm({ appointment, onClose }: { appointment: Appointment | 
                   selected.includes(s.id) ? 'border-gold-400 bg-gold-300/10' : 'border-cream-200',
                 )}
               >
-                <span>{s.icon} {s.name}</span>
+                <span className="flex items-center gap-1.5">
+                  <ServiceIcon icon={s.icon} size={14} className="text-gold-500" /> {s.name}
+                </span>
                 <span className="text-xs text-stone-400">{formatCurrency(s.price)}</span>
               </button>
             ))}

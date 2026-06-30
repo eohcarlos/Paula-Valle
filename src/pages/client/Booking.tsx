@@ -14,6 +14,7 @@ import {
 import { useStore } from '@/store/store'
 import { Button } from '@/components/ui/Button'
 import { Textarea } from '@/components/ui/Input'
+import { ServiceIcon } from '@/lib/serviceIcons'
 import { daySlots, isWorkingDay } from '@/lib/availability'
 import { cn, formatCurrency, nowBR, nowTimeBR, todayISO, WEEKDAYS_FULL } from '@/lib/utils'
 import { format, addDays, parseISO } from 'date-fns'
@@ -226,10 +227,10 @@ export default function Booking() {
                       )}
                     >
                       <div className={cn(
-                        'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-2xl transition-all',
-                        isSel ? 'bg-gold-400/15 scale-105' : 'bg-cream-100 group-hover:bg-cream-200',
+                        'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition-all',
+                        isSel ? 'bg-gold-400/15 scale-105 text-gold-700' : 'bg-cream-100 text-stone-500 group-hover:bg-cream-200',
                       )}>
-                        {s.icon}
+                        <ServiceIcon icon={s.icon} size={22} />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="font-serif text-base font-semibold leading-snug text-stone-800">
@@ -472,7 +473,7 @@ export default function Booking() {
                     const s = services.find((x) => x.id === id)!
                     return (
                       <div key={id} className="flex items-center gap-2.5">
-                        <span className="text-lg leading-none">{s.icon}</span>
+                        <span className="text-gold-600"><ServiceIcon icon={s.icon} size={17} /></span>
                         <span className="min-w-0 flex-1 truncate text-sm text-stone-600">{s.name}</span>
                         <span className="shrink-0 text-sm font-semibold text-stone-700">{formatCurrency(s.price)}</span>
                       </div>
@@ -546,7 +547,7 @@ export default function Booking() {
                     const s = services.find((x) => x.id === id)!
                     return (
                       <div key={id} className="flex items-center gap-2.5">
-                        <span className="text-lg leading-none">{s.icon}</span>
+                        <span className="text-gold-600"><ServiceIcon icon={s.icon} size={17} /></span>
                         <span className="min-w-0 flex-1 truncate text-sm text-stone-600">{s.name}</span>
                         <span className="shrink-0 text-sm font-semibold text-stone-700">{formatCurrency(s.price)}</span>
                       </div>

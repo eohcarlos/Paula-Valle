@@ -5,15 +5,15 @@ const iso = (d: Date) => format(d, 'yyyy-MM-dd')
 const now = new Date()
 
 export const SERVICES: Service[] = [
-  { id: 'srv_corte_fem', name: 'Corte Feminino', description: 'Corte personalizado com finalização.', duration: 60, price: 90, active: true, icon: '✂️' },
-  { id: 'srv_corte_masc', name: 'Corte Masculino', description: 'Corte masculino com acabamento.', duration: 40, price: 50, active: true, icon: '💈' },
-  { id: 'srv_escova', name: 'Escova', description: 'Escova modeladora com brilho.', duration: 45, price: 60, active: true, icon: '💨' },
-  { id: 'srv_coloracao', name: 'Coloração', description: 'Coloração completa com produtos premium.', duration: 120, price: 180, active: true, icon: '🎨' },
-  { id: 'srv_mechas', name: 'Mechas', description: 'Mechas com técnica de iluminação.', duration: 180, price: 280, active: true, icon: '✨' },
-  { id: 'srv_progressiva', name: 'Progressiva', description: 'Alisamento e redução de volume.', duration: 150, price: 250, active: true, icon: '🌿' },
-  { id: 'srv_hidratacao', name: 'Hidratação', description: 'Tratamento profundo de hidratação.', duration: 50, price: 80, active: true, icon: '💧' },
-  { id: 'srv_manicure', name: 'Manicure', description: 'Cuidado completo das unhas das mãos.', duration: 40, price: 40, active: true, icon: '💅' },
-  { id: 'srv_pedicure', name: 'Pedicure', description: 'Cuidado completo das unhas dos pés.', duration: 50, price: 45, active: true, icon: '🦶' },
+  { id: 'srv_corte_fem', name: 'Corte Feminino', description: 'Corte personalizado com finalização.', duration: 60, price: 90, active: true, icon: 'scissors' },
+  { id: 'srv_corte_masc', name: 'Corte Masculino', description: 'Corte masculino com acabamento.', duration: 40, price: 50, active: true, icon: 'scissors' },
+  { id: 'srv_escova', name: 'Escova', description: 'Escova modeladora com brilho.', duration: 45, price: 60, active: true, icon: 'wind' },
+  { id: 'srv_coloracao', name: 'Coloração', description: 'Coloração completa com produtos premium.', duration: 120, price: 180, active: true, icon: 'palette' },
+  { id: 'srv_mechas', name: 'Mechas', description: 'Mechas com técnica de iluminação.', duration: 180, price: 280, active: true, icon: 'sparkles' },
+  { id: 'srv_progressiva', name: 'Progressiva', description: 'Alisamento e redução de volume.', duration: 150, price: 250, active: true, icon: 'leaf' },
+  { id: 'srv_hidratacao', name: 'Hidratação', description: 'Tratamento profundo de hidratação.', duration: 50, price: 80, active: true, icon: 'droplet' },
+  { id: 'srv_manicure', name: 'Manicure', description: 'Cuidado completo das unhas das mãos.', duration: 40, price: 40, active: true, icon: 'hand' },
+  { id: 'srv_pedicure', name: 'Pedicure', description: 'Cuidado completo das unhas dos pés.', duration: 50, price: 45, active: true, icon: 'footprints' },
 ]
 
 export const PROFESSIONALS_LIST: Professional[] = [

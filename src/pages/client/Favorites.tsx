@@ -3,6 +3,7 @@ import { Heart, CalendarPlus, Sparkles, Clock } from 'lucide-react'
 import { useStore } from '@/store/store'
 import { Button } from '@/components/ui/Button'
 import { cn, formatCurrency } from '@/lib/utils'
+import { ServiceIcon } from '@/lib/serviceIcons'
 
 export default function Favorites() {
   const { currentUser, services, toggleFavorite } = useStore()
@@ -45,8 +46,8 @@ export default function Favorites() {
                 <div className="h-1 w-full bg-blush-300" />
                 <div className="p-5">
                   <div className="flex items-start justify-between gap-2">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blush-50 text-3xl">
-                      {s.icon}
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blush-50 text-blush-500">
+                      <ServiceIcon icon={s.icon} size={26} />
                     </div>
                     <button
                       onClick={() => toggleFavorite(currentUser.id, s.id)}
@@ -102,10 +103,10 @@ export default function Favorites() {
                 )}
               >
                 <div className={cn(
-                  'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-2xl transition',
-                  fav ? 'bg-blush-100' : 'bg-cream-100 group-hover:bg-blush-50',
+                  'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition',
+                  fav ? 'bg-blush-100 text-blush-500' : 'bg-cream-100 text-stone-500 group-hover:bg-blush-50',
                 )}>
-                  {s.icon}
+                  <ServiceIcon icon={s.icon} size={20} />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-stone-700">{s.name}</p>

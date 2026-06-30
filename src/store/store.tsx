@@ -12,6 +12,7 @@ import type {
 import { buildSeedState } from '@/data/seed'
 import { uid, nowISO } from '@/lib/utils'
 import { supabase } from '@/lib/supabase'
+import { normalizeServiceIcon } from '@/lib/serviceIcons'
 import {
   fromUserRow,
   fromAppointmentRow,
@@ -87,7 +88,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       supabase.from('users_public').select('*'),
     ])
 
-    const services: Service[] = (svcRes.data ?? []).map((s: any) => ({ ...s, price: Number(s.price) }))
+    const services: Service[] = (svcRes.data ?? []).map((s: any) => ({ ...s, price: Number(s.price), icon: normalizeServiceIcon(s.icon) }))
     const professionals: Professional[] = proRes.data ?? []
     const appointments: Appointment[] = (aptRes.data ?? []).map(fromAppointmentRow)
     const notifications: Notification[] = (ntfRes.data ?? []).map(fromNotificationRow)

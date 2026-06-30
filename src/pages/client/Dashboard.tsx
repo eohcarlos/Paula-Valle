@@ -7,6 +7,7 @@ import { useStore } from '@/store/store'
 import { StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { CountUp } from '@/components/ui/CountUp'
+import { ServiceIcon } from '@/lib/serviceIcons'
 import { formatCurrency, formatDateShort, todayISO } from '@/lib/utils'
 
 export default function ClientDashboard() {
@@ -198,8 +199,8 @@ export default function ClientDashboard() {
               <div className="space-y-2">
                 {topServices.map((s, i) => (
                   <div key={s!.id} className="flex items-center gap-3 rounded-2xl bg-cream-50 p-3">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white text-xl shadow-sm">
-                      {s!.icon}
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white text-gold-600 shadow-sm">
+                      <ServiceIcon icon={s!.icon} size={16} />
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-stone-700">{s!.name}</p>
