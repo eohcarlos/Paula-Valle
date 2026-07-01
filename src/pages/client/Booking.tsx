@@ -44,12 +44,14 @@ export default function Booking() {
   const total = selected.reduce((s, id) => s + (services.find((x) => x.id === id)?.price ?? 0), 0)
   const duration = selected.reduce((s, id) => s + (services.find((x) => x.id === id)?.duration ?? 0), 0)
 
+  const selectedProName = professionalId ? professionals.find((p) => p.id === professionalId)?.name : undefined
+
   const slots = useMemo(() => {
-    const all = daySlots(date, settings, appointments, undefined, duration)
+    const all = daySlots(date, settings, appointments, undefined, duration, selectedProName)
     if (date !== todayISO()) return all
     const now = nowTimeBR()
     return all.filter((s) => s.time >= now)
-  }, [date, settings, appointments, duration])
+  }, [date, settings, appointments, duration, selectedProName])
 
   const working = isWorkingDay(date, settings)
   const windowDays = settings.bookingWindowDays || 14
@@ -265,7 +267,7 @@ export default function Booking() {
             <div className="grid gap-3 sm:grid-cols-2">
               {/* Opção: qualquer profissional */}
               <button
-                onClick={() => setProfessionalId('')}
+                onClick={() => { setProfessionalId(''); setTime('') }}
                 className={cn(
                   'group flex items-center gap-3.5 rounded-2xl border p-4 text-left transition-all duration-200',
                   professionalId === ''
@@ -299,7 +301,7 @@ export default function Booking() {
                 return (
                   <button
                     key={pro.id}
-                    onClick={() => setProfessionalId(pro.id)}
+                    onClick={() => { setProfessionalId(pro.id); setTime('') }}
                     className={cn(
                       'group flex items-center gap-3.5 rounded-2xl border p-4 text-left transition-all duration-200',
                       isSel

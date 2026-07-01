@@ -266,7 +266,7 @@ export default function ClientAppointments() {
             updateAppointment(reschedule.id, { date, time, status: 'scheduled' })
             setReschedule(null)
           }}
-          slotsFor={(d) => daySlots(d, settings, appointments, reschedule.id, reschedule.duration)}
+          slotsFor={(d) => daySlots(d, settings, appointments, reschedule.id, reschedule.duration, reschedule.professional)}
         />
       )}
     </div>

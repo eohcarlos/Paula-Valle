@@ -7,15 +7,6 @@ function toMinutes(time: string): number {
   return h * 60 + m
 }
 
-/** Retorna os horários de início dos agendamentos ativos em uma data. */
-export function occupiedSlots(appointments: Appointment[], date: string, ignoreId?: string): Set<string> {
-  return new Set(
-    appointments
-      .filter((a) => a.date === date && a.status !== 'canceled' && a.id !== ignoreId)
-      .map((a) => a.time),
-  )
-}
-
 /** Blocos de horário (ranges) de um dia da semana, ou [] se o salão não atende. */
 export function dayRanges(date: string, settings: SalonSettings): TimeRange[] {
   let dow: number
@@ -65,9 +56,14 @@ export interface SlotInfo {
  * Retorna os slots do dia com disponibilidade calculada considerando a duração de
  * cada agendamento existente. Um slot só está disponível se:
  *   1. O novo atendimento [t, t+duration) não sobrepõe nenhum agendamento existente [A.time, A.time+A.duration)
+ *      do MESMO profissional (ou sem profissional definido, que bloqueia para todos por segurança)
  *   2. O novo atendimento termina antes do fim do bloco de horário
  *
  * @param duration duração total dos serviços selecionados em minutos
+ * @param professional nome do profissional selecionado — se informado, só considera conflitos
+ *   com atendimentos desse mesmo profissional (mais atendimentos sem profissional definido,
+ *   que bloqueiam para todos por segurança). Se omitido, mantém o bloqueio global (comportamento
+ *   conservador para "qualquer profissional").
  */
 export function daySlots(
   date: string,
@@ -75,13 +71,18 @@ export function daySlots(
   appointments: Appointment[],
   ignoreId?: string,
   duration = 0,
+  professional?: string,
 ): SlotInfo[] {
   const ranges = dayRanges(date, settings)
   if (ranges.length === 0) return []
 
   // Agendamentos ativos no dia (exceto cancelados e o ignorado para edição)
   const existing = appointments.filter(
-    (a) => a.date === date && a.status !== 'canceled' && a.id !== ignoreId,
+    (a) =>
+      a.date === date &&
+      a.status !== 'canceled' &&
+      a.id !== ignoreId &&
+      (!professional || !a.professional || a.professional === 'A definir' || a.professional === professional),
   )
 
   // Duração mínima de 1 para garantir que o próprio início seja bloqueado quando duration=0

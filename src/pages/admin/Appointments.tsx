@@ -300,7 +300,7 @@ function AppointmentForm({ appointment, onClose }: { appointment: Appointment | 
 
   const total = selected.reduce((s, id) => s + (services.find((x) => x.id === id)?.price ?? 0), 0)
   const duration = selected.reduce((s, id) => s + (services.find((x) => x.id === id)?.duration ?? 0), 0)
-  const allSlots = daySlots(date, settings, appointments, appointment?.id, duration)
+  const allSlots = daySlots(date, settings, appointments, appointment?.id, duration, professional)
   const slots = !appointment && date === todayISO()
     ? allSlots.filter((s) => s.time >= nowTimeBR())
     : allSlots
@@ -326,7 +326,7 @@ function AppointmentForm({ appointment, onClose }: { appointment: Appointment | 
           <Select label="Cliente" value={clientId} onChange={(e) => setClientId(e.target.value)}>
             {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </Select>
-          <Select label="Profissional" value={professional} onChange={(e) => setProfessional(e.target.value)}>
+          <Select label="Profissional" value={professional} onChange={(e) => { setProfessional(e.target.value); setTime('') }}>
             {activePros.length === 0 && <option value="">Cadastre um profissional</option>}
             {/* mantém o valor antigo caso o profissional tenha sido desativado/removido */}
             {professional && !activePros.some((p) => p.name === professional) && (
