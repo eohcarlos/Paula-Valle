@@ -1,10 +1,11 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Camera, Trash2, Save, CheckCircle2, User, Star, Shield, KeyRound, LogOut } from 'lucide-react'
+import { Camera, Trash2, Save, CheckCircle2, User, Star, Shield, KeyRound, LogOut, Bell } from 'lucide-react'
 import { useStore } from '@/store/store'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { Avatar } from '@/components/Logo'
+import { PushToggle } from '@/components/PushToggle'
 
 export default function Profile() {
   const { currentUser, updateUser, verifyPassword, logout } = useStore()
@@ -181,6 +182,17 @@ export default function Profile() {
                 )}
               </div>
             </form>
+          </div>
+
+          {/* Notificações */}
+          <div className="overflow-hidden rounded-3xl border border-cream-200 bg-white shadow-card">
+            <div className="flex items-center gap-2 border-b border-cream-100 bg-gradient-to-r from-cream-50 to-white px-5 py-4">
+              <Bell size={16} className="text-gold-600" />
+              <p className="text-xs font-bold uppercase tracking-widest text-stone-400">Notificações</p>
+            </div>
+            <div className="p-5">
+              <PushToggle userId={currentUser.id} />
+            </div>
           </div>
 
           {/* Alterar senha */}

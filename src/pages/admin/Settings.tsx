@@ -6,11 +6,12 @@ import {
 import { useStore } from '@/store/store'
 import { Input, Textarea } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { PushToggle } from '@/components/PushToggle'
 import { cn, WEEKDAYS_FULL } from '@/lib/utils'
 import type { SalonSettings, DaySchedule } from '@/types'
 
 export default function Settings() {
-  const { settings, updateSettings, resetDemo } = useStore()
+  const { settings, updateSettings, resetDemo, currentUser } = useStore()
   const [form, setForm] = useState<SalonSettings>(settings)
   const [saved, setSaved] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -302,6 +303,11 @@ export default function Settings() {
             onChange={(v) => setForm((f) => ({ ...f, notifyReminder: v }))}
           />
         </div>
+        {currentUser && (
+          <div className="border-t border-cream-100 p-5">
+            <PushToggle userId={currentUser.id} />
+          </div>
+        )}
       </div>
 
       {/* Ações do rodapé */}
