@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   CalendarPlus, CalendarClock, CheckCircle2, Wallet,
   Heart, Sparkles, ArrowRight, Clock, User, TrendingUp,
@@ -12,6 +12,7 @@ import { formatCurrency, formatDateShort, todayISO } from '@/lib/utils'
 
 export default function ClientDashboard() {
   const { currentUser, appointments, services } = useStore()
+  const navigate = useNavigate()
   if (!currentUser) return null
 
   const mine = appointments.filter((a) => a.clientId === currentUser.id)
@@ -102,7 +103,10 @@ export default function ClientDashboard() {
             </div>
             <div className="p-5">
               {next ? (
-                <div className="relative overflow-hidden rounded-2xl border border-gold-300/40 bg-gradient-to-br from-cream-50 to-white p-5">
+                <button
+                  onClick={() => navigate(`/app/agendamentos?apt=${next.id}`)}
+                  className="relative w-full overflow-hidden rounded-2xl border border-gold-300/40 bg-gradient-to-br from-cream-50 to-white p-5 text-left transition hover:shadow-soft"
+                >
                   <div className="pointer-events-none absolute right-0 top-0 h-24 w-24 opacity-10">
                     <Sparkles size={96} className="text-gold-400" />
                   </div>
@@ -130,7 +134,7 @@ export default function ClientDashboard() {
                       <span className="gold-text font-serif text-2xl font-semibold">{formatCurrency(next.total)}</span>
                     </div>
                   </div>
-                </div>
+                </button>
               ) : (
                 <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-cream-300 py-10 text-center">
                   <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-cream-100">
@@ -165,7 +169,11 @@ export default function ClientDashboard() {
               ) : (
                 <div className="space-y-2">
                   {lastThree.map((a) => (
-                    <div key={a.id} className="flex items-center gap-4 rounded-2xl border border-cream-100 px-4 py-3 transition hover:bg-cream-50">
+                    <button
+                      key={a.id}
+                      onClick={() => navigate(`/app/agendamentos?apt=${a.id}`)}
+                      className="flex w-full items-center gap-4 rounded-2xl border border-cream-100 px-4 py-3 text-left transition hover:bg-cream-50"
+                    >
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
                         <CheckCircle2 size={16} />
                       </div>
@@ -176,7 +184,7 @@ export default function ClientDashboard() {
                         <p className="text-xs text-stone-400">{formatDateShort(a.date)} · {a.professional}</p>
                       </div>
                       <span className="shrink-0 font-serif text-base font-semibold text-gold-600">{formatCurrency(a.total)}</span>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}

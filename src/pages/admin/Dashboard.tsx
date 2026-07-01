@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   ResponsiveContainer,
   AreaChart,
@@ -28,8 +29,8 @@ import {
   Receipt,
   Star,
   Percent,
-  LayoutDashboard,
   ListOrdered,
+  UserCog,
 } from 'lucide-react'
 import { useStore } from '@/store/store'
 import { StatCard } from '@/components/ui/StatCard'
@@ -43,6 +44,7 @@ const PIE_COLORS = ['#C9A35E', '#E498A2', '#D9B978', '#B79468', '#EFBAC0', '#8F6
 
 export default function AdminDashboard() {
   const { appointments, users, services } = useStore()
+  const navigate = useNavigate()
   const today = todayISO()
   const clients = users.filter((u) => u.role === 'client')
 
@@ -113,6 +115,23 @@ export default function AdminDashboard() {
       .sort((a, b) => b.value - a.value)
       .slice(0, 6)
   }, [appointments, services])
+
+  // Desempenho por profissional (atendimentos finalizados)
+  const professionalData = useMemo(() => {
+    const map = new Map<string, { count: number; revenue: number }>()
+    appointments
+      .filter((a) => a.status === 'completed')
+      .forEach((a) => {
+        const name = a.professional || 'A definir'
+        const cur = map.get(name) ?? { count: 0, revenue: 0 }
+        cur.count += 1
+        cur.revenue += a.total
+        map.set(name, cur)
+      })
+    return [...map.entries()]
+      .map(([name, v]) => ({ name, ...v }))
+      .sort((a, b) => b.count - a.count)
+  }, [appointments])
 
   // Atualiza a cada minuto para que atendimentos saiam de "próximos" e entrem em "atrasados" sem precisar recarregar a página
   const [now, setNow] = useState(nowBR)
@@ -298,11 +317,12 @@ export default function AdminDashboard() {
             ) : (
               <div className="space-y-2">
                 {upcomingToday.map((a) => (
-                  <div
+                  <button
                     key={a.id}
+                    onClick={() => navigate(`/admin/agendamentos?apt=${a.id}`)}
                     className={cn(
-                      'flex items-center gap-4 rounded-2xl border px-4 py-3',
-                      a.isLate ? 'border-red-200 bg-red-50/50' : 'border-cream-200',
+                      'flex w-full items-center gap-4 rounded-2xl border px-4 py-3 text-left transition hover:shadow-sm',
+                      a.isLate ? 'border-red-200 bg-red-50/50 hover:bg-red-50' : 'border-cream-200 hover:border-gold-300/60',
                     )}
                   >
                     <span className={cn('font-serif text-lg font-semibold', a.isLate ? 'text-red-600' : 'text-gold-700')}>{a.time}</span>
@@ -314,7 +334,7 @@ export default function AdminDashboard() {
                     </div>
                     {a.isLate && <span className="text-xs font-semibold uppercase tracking-wide text-red-500">Atrasado</span>}
                     <StatusBadge status={a.status} />
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
@@ -328,14 +348,48 @@ export default function AdminDashboard() {
             <span className="text-xs font-bold uppercase tracking-widest text-stone-400">Ranking de serviços</span>
           </div>
           <div className="p-5">
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={serviceData} layout="vertical" margin={{ left: 10, right: 10 }}>
-                <XAxis type="number" hide />
-                <YAxis type="category" dataKey="name" width={90} fontSize={11} stroke="#A8A29E" tickLine={false} axisLine={false} />
-                <Tooltip />
-                <Bar dataKey="value" radius={[0, 8, 8, 0]} fill="#E498A2" />
-              </BarChart>
-            </ResponsiveContainer>
+            {serviceData.length === 0 ? (
+              <p className="py-12 text-center text-sm text-stone-400">Sem dados ainda.</p>
+            ) : (
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={serviceData} layout="vertical" margin={{ left: 10, right: 10 }}>
+                  <XAxis type="number" hide />
+                  <YAxis type="category" dataKey="name" width={90} fontSize={11} stroke="#A8A29E" tickLine={false} axisLine={false} />
+                  <Tooltip />
+                  <Bar dataKey="value" radius={[0, 8, 8, 0]} fill="#E498A2" />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Desempenho por profissional */}
+      <div>
+        <div className="overflow-hidden rounded-3xl border border-cream-200 bg-white shadow-card">
+          <div className="flex items-center gap-2 border-b border-cream-100 bg-gradient-to-r from-cream-50 to-white px-5 py-4">
+            <UserCog size={17} className="text-gold-600" />
+            <span className="text-xs font-bold uppercase tracking-widest text-stone-400">Desempenho por profissional</span>
+          </div>
+          <div className="p-5">
+            {professionalData.length === 0 ? (
+              <p className="py-8 text-center text-sm text-stone-400">Nenhum atendimento finalizado ainda.</p>
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {professionalData.map((p, i) => (
+                  <div key={p.name} className="flex items-center gap-3 rounded-2xl bg-cream-50 p-4">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-sm font-bold text-gold-600 shadow-sm">
+                      #{i + 1}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-stone-700">{p.name}</p>
+                      <p className="text-xs text-stone-400">{p.count} atendimento{p.count > 1 ? 's' : ''}</p>
+                    </div>
+                    <span className="shrink-0 font-serif text-sm font-semibold text-gold-600">{formatCurrency(p.revenue)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
