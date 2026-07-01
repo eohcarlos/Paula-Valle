@@ -116,7 +116,7 @@ export function buildSeedState(): AppState {
       instagram: '@paulavalle_e',
       whatsapp: '(11) 95221-9784',
       email: 'contato@paulavalle.com',
-      address: 'Itu — São Paulo / SP',
+      address: 'Rua Antônio Ribeiro de Camargo Penteado, 232 — Jd Aeroporto, Itu/SP',
       openTime: '09:00',
       closeTime: '19:00',
       workDays: [1, 2, 3, 4, 5, 6],
