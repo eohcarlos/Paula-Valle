@@ -10,12 +10,14 @@ import {
   ArrowRight,
   FileText,
   User,
+  MessageCircle,
 } from 'lucide-react'
 import { useStore } from '@/store/store'
 import { Button } from '@/components/ui/Button'
 import { Textarea } from '@/components/ui/Input'
 import { ServiceIcon } from '@/lib/serviceIcons'
 import { daySlots, isWorkingDay } from '@/lib/availability'
+import { whatsappLink } from '@/lib/whatsapp'
 import { cn, formatCurrency, nowBR, nowTimeBR, todayISO, WEEKDAYS_FULL } from '@/lib/utils'
 import { format, addDays, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -88,6 +90,19 @@ export default function Booking() {
 
   /* ── Tela de sucesso ─────────────────────────────────────────── */
   if (done) {
+    const serviceNames = selected.map((id) => services.find((x) => x.id === id)?.name).join(', ')
+    const proLabel = professionalId === '' ? 'Qualquer profissional' : (selectedProName ?? 'A definir')
+    const whatsMessage = [
+      'Olá! Acabei de agendar no Studio Paula Valle:',
+      '',
+      `Serviço: ${serviceNames}`,
+      `Data: ${format(parseISO(date), "dd 'de' MMMM", { locale: ptBR })} às ${time}`,
+      `Profissional: ${proLabel}`,
+      '',
+      'Gostaria de confirmar os detalhes, obrigado(a)!',
+    ].join('\n')
+    const whatsHref = whatsappLink(settings.whatsapp, whatsMessage)
+
     return (
       <div className="mx-auto max-w-lg py-16 text-center animate-scale-in">
         <div className="relative mx-auto mb-8 h-32 w-32">
@@ -118,7 +133,16 @@ export default function Booking() {
           </div>
         </div>
 
-        <div className="mt-8 flex justify-center gap-3">
+        <a
+          href={whatsHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mx-auto mt-5 flex w-fit items-center gap-2 rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-emerald-600"
+        >
+          <MessageCircle size={17} /> Enviar no WhatsApp
+        </a>
+
+        <div className="mt-6 flex justify-center gap-3">
           <Button size="lg" onClick={() => navigate('/app/agendamentos')}>
             Meus agendamentos
           </Button>
