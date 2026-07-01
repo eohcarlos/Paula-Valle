@@ -10,7 +10,7 @@ import type {
   SalonSettings,
 } from '@/types'
 import { buildSeedState } from '@/data/seed'
-import { uid, nowISO } from '@/lib/utils'
+import { uid, nowISO, formatDateShort } from '@/lib/utils'
 import { supabase } from '@/lib/supabase'
 import { normalizeServiceIcon } from '@/lib/serviceIcons'
 import {
@@ -279,7 +279,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         audience: 'admin',
         appointmentId: apt.id,
         title: 'Novo agendamento',
-        message: `${apt.clientName} agendou para ${apt.date} às ${apt.time}.`,
+        message: `${apt.clientName} agendou para ${formatDateShort(apt.date)} às ${apt.time}.`,
         type: 'info',
       })
     }
@@ -334,7 +334,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         userId: apt.clientId,
         appointmentId: apt.id,
         title: `Agendamento ${labels[status]}`,
-        message: `Seu atendimento de ${apt.date} às ${apt.time} foi ${labels[status]}.`,
+        message: `Seu atendimento de ${formatDateShort(apt.date)} às ${apt.time} foi ${labels[status]}.`,
         type: status === 'canceled' ? 'warning' : 'success',
       })
     }
